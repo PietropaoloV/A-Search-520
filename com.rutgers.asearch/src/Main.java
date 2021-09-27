@@ -240,6 +240,10 @@ public class Main {
                 GridWorldInfo discoveredResult = algo.search(start, end, grid, undiscoveredOrBlocked);
                 globalInfo.setTrajectoryLengthDiscovered(discoveredResult.getTrajectoryLength());
 
+                // run search over complete gridworld and record results
+                GridWorldInfo completeResult = algo.search(start, end, grid, cell -> cell.isBlocked());
+                globalInfo.setTrajectoryLengthComplete(completeResult.getTrajectoryLength());
+
                 globalInfo.setProbability(prob);
                 results.add(globalInfo);
             }
