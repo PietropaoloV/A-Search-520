@@ -13,13 +13,49 @@ public class Main {
     }
 
     private static void runQuestion5(int xDim, int yDim, int numIter, int maxProb) {
-        String fileName = "Q5-AStar-Manhattan-NoBumps-Results.csv";
+        String fileName = "Q5-RepeatedAStar-Manhattan-NoBumps-Results.csv";
         runRepeatedSearch(fileName, xDim, yDim, numIter, new AStarSearch(Heuristics::manhattanDistance), true, maxProb, true);
-        fileName = "Q5-AStar-Euclidean-NoBumps-Results.csv";
-        runRepeatedSearch(fileName, xDim, yDim, numIter, new AStarSearch(Heuristics::manhattanDistance), true, maxProb, true);
-        fileName = "Q5-AStar-Chebyshev-NoBumps-Results.csv";
-        runRepeatedSearch(fileName, xDim, yDim, numIter, new AStarSearch(Heuristics::manhattanDistance), true, maxProb, true);
+        fileName = "Q5-RepeatedAStar-Euclidean-NoBumps-Results.csv";
+        runRepeatedSearch(fileName, xDim, yDim, numIter, new AStarSearch(Heuristics::euclideanDistance), true, maxProb, true);
+        fileName = "Q5-RepeatedAStar-Chebyshev-NoBumps-Results.csv";
+        runRepeatedSearch(fileName, xDim, yDim, numIter, new AStarSearch(Heuristics::chebyshevDistance), true, maxProb, true);
 
+        // next, run tests with regular A*, not repeated A*
+        // initialize variables needed for searching
+        Tuple<Integer, Integer> start = new Tuple<>(0, 0);
+        Tuple<Integer, Integer> end = new Tuple<>(xDim-1, yDim-1);
+
+        // initialize search objects and records for each type of heuristic
+        ArrayList<SearchAlgo> algos = new ArrayList<>();
+        algos.add(new AStarSearch(Heuristics::manhattanDistance));
+        algos.add(new AStarSearch(Heuristics::euclideanDistance));
+        algos.add(new AStarSearch(Heuristics::chebyshevDistance));
+        ArrayList<ArrayList<GridWorldInfo>> results = new ArrayList<>();
+        results.add(new ArrayList<>());
+        results.add(new ArrayList<>());
+        results.add(new ArrayList<>());
+
+        for(int prob = 0; prob <= maxProb; ++prob) {
+            for(int iter = 0; iter < numIter; ++iter) {
+                // keep generating grids until a solvable one is found
+                Grid grid = getSolvableMaze(xDim, yDim, algos.get(0), prob);
+
+                // run A* with each heuristic
+                for(int i = 0; i < algos.size(); ++i) {
+                    long startTime = System.nanoTime();
+                    GridWorldInfo result = algos.get(i).search(start, end, grid, cell -> cell.isBlocked());
+                    long endTime = System.nanoTime();
+                    result.setProbability(prob);
+                    result.setRuntime(endTime - startTime);
+                    results.get(i).add(result);
+                }
+            }
+        }
+
+        // print results
+        printResultsToCsv("Q5-AStar-Manhattan-NoBumps-Results.csv", results.get(0));
+        printResultsToCsv("Q5-AStar-Euclidean-NoBumps-Results.csv", results.get(1));
+        printResultsToCsv("Q5-AStar-Chebyshev-NoBumps-Results.csv", results.get(2));
     }
 
     private static void runQuestion6(int xDim, int yDim, int numIter, int maxProb) {
