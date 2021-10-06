@@ -1,25 +1,19 @@
 public class GridCell {
     private int x;
     private int y;
+    private Sentiment blockSentiment;
+    private int numAdj;
+    private int numSensedBlocked;
+    private int numAdjBlocked;
+    private int numEmpty;
+    private int numAdjHidden;
     private boolean isBlocked;
-    private double cost;
-    private double heuristicCost;
-    private GridCell prev;
+    private boolean isVisited;
 
-    public GridCell(int x, int y, boolean isBlocked, int i) {
+    public GridCell(int x, int y, boolean isBlocked) {
         this.x = x;
         this.y = y;
         this.isBlocked = isBlocked;
-        this.cost = 0;
-        this.prev = null;
-    }
-
-    public double getHeuristicCost() {
-        return heuristicCost;
-    }
-
-    public void setHeuristicCost(double heuristicCost) {
-        this.heuristicCost = heuristicCost;
     }
 
     public int getX() {
@@ -38,6 +32,54 @@ public class GridCell {
         this.y = y;
     }
 
+    public Sentiment getBlockSentiment() {
+        return blockSentiment;
+    }
+
+    public void setBlockSentiment(Sentiment blockSentiment) {
+        this.blockSentiment = blockSentiment;
+    }
+
+    public int getNumAdj() {
+        return numAdj;
+    }
+
+    public void setNumAdj(int numAdj) {
+        this.numAdj = numAdj;
+    }
+
+    public int getNumSensedBlocked() {
+        return numSensedBlocked;
+    }
+
+    public void setNumSensedBlocked(int numSensedBlocked) {
+        this.numSensedBlocked = numSensedBlocked;
+    }
+
+    public int getNumAdjBlocked() {
+        return numAdjBlocked;
+    }
+
+    public void setNumAdjBlocked(int numAdjBlocked) {
+        this.numAdjBlocked = numAdjBlocked;
+    }
+
+    public int getNumEmpty() {
+        return numEmpty;
+    }
+
+    public void setNumEmpty(int numEmpty) {
+        this.numEmpty = numEmpty;
+    }
+
+    public int getNumAdjHidden() {
+        return numAdjHidden;
+    }
+
+    public void setNumAdjHidden(int numAdjHidden) {
+        this.numAdjHidden = numAdjHidden;
+    }
+
     public boolean isBlocked() {
         return isBlocked;
     }
@@ -46,35 +88,11 @@ public class GridCell {
         isBlocked = blocked;
     }
 
-    public double getCost() {
-        return cost;
+    public boolean isVisited() {
+        return isVisited;
     }
 
-    public void setCost(double cost) {
-        this.cost = cost;
+    public void setVisited(boolean visited) {
+        isVisited = visited;
     }
-
-    public Tuple<Integer, Integer> getLocation(){
-        return new Tuple<>(x,y);
-    }
-
-    public GridCell getPrev() {
-        return prev;
-    }
-
-    public void setPrev(GridCell prev) {
-        this.prev = prev;
-    }
-
-    @Override
-    public String toString() {
-        return "GridCell{" +
-                "x=" + x +
-                ", y=" + y +
-                ", isBlocked=" + isBlocked +
-                ", cost=" + cost +
-                '}';
-    }
-
-
 }

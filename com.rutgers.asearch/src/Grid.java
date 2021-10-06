@@ -17,10 +17,10 @@ public class Grid {
             ArrayList<GridCell> tempList = new ArrayList<>();
             for(int x = 0; x < dimensionX; x++){
                 if((x == 0 && y == 0) || (x == dimensionX-1 && y == dimensionY-1)){
-                    tempList.add(new GridCell(x,y,generateIsBlocked(0),0));
+                    tempList.add(new GridCell(x,y,generateIsBlocked(0)));
                 }
                 else {
-                    tempList.add(new GridCell(x, y, generateIsBlocked(probabilityOfBlocked), 0));
+                    tempList.add(new GridCell(x, y, generateIsBlocked(probabilityOfBlocked)));
                 }
 
             }

@@ -85,10 +85,10 @@ public class AStarSearch implements SearchAlgo{
         return new GridWorldInfo(Double.NaN, numberOfCellsProcessed, null);
     }
 
-    class GridCellComparator implements Comparator<GridCell> { //Custom Comparator for Priority Queue
+    class GridCellComparator implements Comparator<HeuristicData> { //Custom Comparator for Priority Queue
 
         @Override
-        public int compare(GridCell o1, GridCell o2) {
+        public int compare(HeuristicData o1, HeuristicData o2) {
             Double cost1 = o1.getCost() + o1.getHeuristicCost();
             Double cost2 = o2.getCost() + o2.getHeuristicCost();
             if(Double.compare(cost1, cost2) == 0) { // prefer higher g-cost over higher h-cost
@@ -96,6 +96,43 @@ public class AStarSearch implements SearchAlgo{
             } else {
                 return Double.compare(cost1, cost2);
             }
+        }
+    }
+
+    class HeuristicData {
+        boolean isProcessed;
+        int g;
+        int f;
+        int h;
+
+        public HeuristicData() {
+            this.isProcessed = false;
+        }
+
+        public boolean isProcessed() {
+            return isProcessed;
+        }
+
+        public void setProcessed(boolean processed) {
+            isProcessed = processed;
+        }
+
+
+        public int getCost(){
+            return h;
+        }
+
+        public void setG(int g) {
+            this.g = g;
+        }
+        public int getF() {
+            return f;
+        }
+        public void setF(int f) {
+            this.f = f;
+        }
+        public void setH(int h) {
+            this.h = h;
         }
     }
 }
