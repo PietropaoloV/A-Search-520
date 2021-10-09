@@ -3,16 +3,16 @@ import java.util.HashSet;
 import java.util.List;
 
 public class Robot {
-    private Tuple<Integer, Integer> current;
-    private Tuple<Integer, Integer> goal;
-    private Tuple<Integer, Integer> restartPoint;
+    private Point current;
+    private Point goal;
+    private Point restartPoint;
     private boolean canSeeSideways;
     private HashSet<GridCell> blocked;
     private HashSet<GridCell> free;
     private Grid grid;
     private SearchAlgo searchAlgo;
 
-    public Robot(Tuple<Integer, Integer> start, Tuple<Integer, Integer> goal, boolean canSeeSideways, Grid grid, SearchAlgo searchAlgo) {
+    public Robot(Point start, Point goal, boolean canSeeSideways, Grid grid, SearchAlgo searchAlgo) {
         this.current = start;
         this.restartPoint = this.current;
         this.goal = goal;
@@ -24,7 +24,7 @@ public class Robot {
         this.searchAlgo = searchAlgo;
     }
 
-    public Tuple<Integer, Integer> getLocation() {
+    public Point getLocation() {
 //        System.out.println("Curr:" + current);
 //        System.out.println("Restart:" + restartPoint);
         if(current.equals(goal))
@@ -33,19 +33,19 @@ public class Robot {
 
     }
 
-    public Tuple<Integer, Integer> getRestartPoint(){
+    public Point getRestartPoint(){
         return restartPoint;
     }
 
-    public void setRestartPoint(Tuple<Integer, Integer> pos){
+    public void setRestartPoint(Point pos){
         restartPoint = pos;
     }
 
-    public Tuple<Integer, Integer> getGoal() {
+    public Point getGoal() {
         return goal;
     }
 
-    public void move(Tuple<Integer, Integer> pos) {
+    public void move(Point pos) {
         current = pos;
     }
 
@@ -76,17 +76,17 @@ public class Robot {
     // attempt to follow a path, updating known obstacles along the way
     // stops prematurely if it bumps into an obstacle
     // returns the number of steps succesfully moved
-    private int runPath(List<Tuple<Integer, Integer>> path, int backtrackDistance) {
+    private int runPath(List<Point> path, int backtrackDistance) {
         int numStepsTaken = 0;
-        for(Tuple<Integer, Integer> position : path) {
+        for(Point position : path) {
             if(canSeeSideways) { // update obstacles based on fov
-                ArrayList<Tuple<Integer, Integer>> directions = new ArrayList<>(4);
-                directions.add(new Tuple<>(current.f1 + 1, current.f2)); // right
-                directions.add(new Tuple<>(current.f1 - 1, current.f2)); // left
-                directions.add(new Tuple<>(current.f1, current.f2 - 1)); // up
-                directions.add(new Tuple<>(current.f1, current.f2 + 1)); // down
+                ArrayList<Point> directions = new ArrayList<>(4);
+                directions.add(new Point(current.f1 + 1, current.f2)); // right
+                directions.add(new Point(current.f1 - 1, current.f2)); // left
+                directions.add(new Point(current.f1, current.f2 - 1)); // up
+                directions.add(new Point(current.f1, current.f2 + 1)); // down
 
-                for(Tuple<Integer, Integer> direction : directions) {
+                for(Point direction : directions) {
                     GridCell cell = grid.getCell(direction);
                     if(cell != null) {
                         if(cell.isBlocked()) addObstacle(cell);

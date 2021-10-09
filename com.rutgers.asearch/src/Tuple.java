@@ -1,11 +1,11 @@
 public class Tuple<X, Y> {
-        public final X f1;
-        public final Y f2;
-        public Tuple(X f1, Y f2) {
-            this.f1 = f1;
-            this.f2 = f2;
-        }
+    public final X f1;
+    public final Y f2;
 
+    public Tuple(X f1, Y f2) {
+        this.f1 = f1;
+        this.f2 = f2;
+    }
 
     /**
      * Tests whether two tuples are equal by using the stored objects .equals method
@@ -15,14 +15,14 @@ public class Tuple<X, Y> {
      */
     @Override
     public boolean equals(Object obj) {
-        Tuple<X,Y> tuple1 = (Tuple<X,Y> ) obj;
-        return (tuple1.f1.equals(this.f1) && tuple1.f2.equals(this.f2));
+        if (obj == null || !(obj instanceof Tuple<?, ?>))
+            return false;
+        Tuple<?, ?> tuple1 = (Tuple<?, ?>) obj;
+        return tuple1.f1.equals(this.f1) && tuple1.f2.equals(this.f2);
     }
 
     @Override
     public String toString() {
-        return "<" + f1 +
-                "," + f2 +
-                '>';
+        return "<" + f1 + "," + f2 + '>';
     }
 }

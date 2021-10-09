@@ -36,7 +36,7 @@ public class Grid {
         this.grid = generateGrid(xSize,ySize, probability);
     }
 
-    public GridCell getCell(Tuple<Integer, Integer> coordinate){
+    public GridCell getCell(Point coordinate){
         if( coordinate.f1 >=0 && coordinate.f2 >=0 && coordinate.f1 < xSize && coordinate.f2 < ySize){
             return grid.get(coordinate.f2).get(coordinate.f1);
         }
@@ -68,7 +68,7 @@ public class Grid {
                 } else if (x == xSize - 1 && y == ySize - 1) {
                     builder.append("G");
                 } else {
-                    if (this.getCell(new Tuple<>(x,y)).isBlocked()) {
+                    if (this.getCell(new Point(x,y)).isBlocked()) {
                         builder.append("X");
                     } else {
                         builder.append(" ");

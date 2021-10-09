@@ -2,11 +2,11 @@ public class GridCell {
     private int x;
     private int y;
     private Sentiment blockSentiment;
-    private int numAdj;
-    private int numSensedBlocked;
-    private int numAdjBlocked;
-    private int numEmpty;
-    private int numAdjHidden;
+    private int numAdj; // N_x
+    private int numSensedBlocked; // C_x
+    private int numAdjBlocked; // B_x (confirmed blocked)
+    private int numEmpty; // E_x (confirmed empty)
+    private int numAdjHidden; // H_x
     private boolean isBlocked;
     private boolean isVisited;
 
