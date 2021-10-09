@@ -32,6 +32,10 @@ public class GridCell {
         this.y = y;
     }
 
+    public Point getLocation() {
+        return new Point(x, y);
+    }
+
     public Sentiment getBlockSentiment() {
         return blockSentiment;
     }
