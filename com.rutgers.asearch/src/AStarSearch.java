@@ -42,6 +42,7 @@ public class AStarSearch implements SearchAlgo {
             numberOfCellsProcessed++; // Cell Processed Counter
             currentNode = fringe.poll();// Get First in Queue
             previousCost = currentNode.getG(); // Previous g-cost of the cell
+
             if (currentNode.getLocation().equals(end)) { // check if end then start return obj creation
                 // goal found, reconstruct path
                 LinkedList<Point> path = new LinkedList<>();
@@ -97,7 +98,6 @@ public class AStarSearch implements SearchAlgo {
     class HeuristicData {
         private final Point location;
         private HeuristicData prev;
-        private boolean isProcessed;
         private double f;
         private double g;
         private double h;
@@ -105,7 +105,6 @@ public class AStarSearch implements SearchAlgo {
         public HeuristicData(GridCell cell, Point end, HeuristicData prev, double g) {
             this.location = cell.getLocation();
             this.prev = prev;
-            this.isProcessed = false;
             this.g = g;
             this.h = heuristic.apply(this.location, end);
             this.f = this.g + this.h;
@@ -121,14 +120,6 @@ public class AStarSearch implements SearchAlgo {
 
         public void setPrev(HeuristicData prev) {
             this.prev = prev;
-        }
-
-        public boolean isProcessed() {
-            return isProcessed;
-        }
-
-        public void setProcessed(boolean processed) {
-            isProcessed = processed;
         }
 
         public double getCost() { // returns the total f-cost (NOT the g-cost)

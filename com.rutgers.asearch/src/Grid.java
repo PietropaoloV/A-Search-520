@@ -1,50 +1,83 @@
-import java.util.ArrayList;
-
 public class Grid {
-
-    private ArrayList<ArrayList<GridCell>> grid;
+    private GridCell[] grid; // represent as flat array to make deep-copying easier
     private int xSize;
     private int ySize;
 
-    private boolean generateIsBlocked(int probabilityOfBlocked){
-        return Math.random()*100 < probabilityOfBlocked;
+    public Grid(int xSize, int ySize, int probability) {
+        this.xSize = xSize;
+        this.ySize = ySize;
+        this.grid = generateGrid(xSize, ySize, probability);
     }
 
-    private ArrayList<ArrayList<GridCell>> generateGrid(int dimensionX, int dimensionY, int probabilityOfBlocked){
-        ArrayList<ArrayList<GridCell>> grid = new ArrayList<>();
+    // deep copy constructor
+    public Grid(Grid other) {
+        this.xSize = other.getXSize();
+        this.ySize = other.getYSize();
+        this.grid = new GridCell[xSize * ySize];
 
-        for (int y = 0; y < dimensionY; y++){
-            ArrayList<GridCell> tempList = new ArrayList<>();
-            for(int x = 0; x < dimensionX; x++){
-                if((x == 0 && y == 0) || (x == dimensionX-1 && y == dimensionY-1)){
-                    tempList.add(new GridCell(x,y,generateIsBlocked(0)));
-                }
-                else {
-                    tempList.add(new GridCell(x, y, generateIsBlocked(probabilityOfBlocked)));
+        for (int i = 0; i < grid.length; i++) {
+            this.grid[i] = (GridCell) other.grid[i].clone();
+        }
+    }
+
+    private boolean generateIsBlocked(int probabilityOfBlocked) {
+        return Math.random() * 100 < probabilityOfBlocked;
+    }
+
+    private boolean inBounds(int x, int y) {
+        return x >= 0 && y >= 0 && x < xSize && y < ySize;
+    }
+
+    private GridCell[] generateGrid(int dimX, int dimY, int probabilityOfBlocked) {
+        GridCell[] grid = new GridCell[dimX * dimY];
+
+        for (int y = 0; y < dimY; y++) {
+            for (int x = 0; x < dimX; x++) {
+                int index = y * dimX + x;
+
+                int numAdj = 0; // determine how many neighbours the new cell has
+                for (Point neighbour : new Point(x, y).get8Neighbours()) {
+                    if (inBounds(neighbour.f1, neighbour.f2))
+                        numAdj++;
                 }
 
+                // determine if cell is blocked
+                boolean isBlocked = (index == 0 || index == dimX * dimY - 1) ?
+                    false :
+                    generateIsBlocked(probabilityOfBlocked);
+
+                grid[index] = new GridCell(x, y, numAdj, isBlocked);
             }
-            grid.add(tempList);
+        }
+
+        // iterate through grid one more time to get C_x for each cell
+        for (int y = 0; y < dimY; y++) {
+            for (int x = 0; x < dimX; x++) {
+                int index = y * dimX + x;
+                if (grid[index].isBlocked()) {
+                    for (Point adj : new Point(x, y).get8Neighbours()) {
+                        if (!inBounds(adj.f1, adj.f2)) continue;
+                        grid[adj.f2 * dimX + adj.f1].addNumSensedBlocked(1);
+                    }
+                }
+            }
         }
 
         return grid;
     }
 
-    public Grid(int xSize, int ySize, int probability) {
-        this.xSize = xSize;
-        this.ySize = ySize;
-        this.grid = generateGrid(xSize,ySize, probability);
-    }
-
-    public GridCell getCell(Point coordinate){
-        if( coordinate.f1 >=0 && coordinate.f2 >=0 && coordinate.f1 < xSize && coordinate.f2 < ySize){
-            return grid.get(coordinate.f2).get(coordinate.f1);
+    public GridCell getCell(int x, int y) {
+        if (inBounds(x, y)) {
+            return grid[y * getXSize() + x];
         }
         return null;
     }
 
+    public GridCell getCell(Point coord) {
+        return getCell(coord.f1, coord.f2);
+    }
 
-    public ArrayList<ArrayList<GridCell>> getGrid() {
+    public GridCell[] getGrid() {
         return grid;
     }
 
@@ -56,19 +89,38 @@ public class Grid {
         return ySize;
     }
 
+    // confirms an unknown cell as blocked/empty and updates KB accordingly
+    public void setSentiment(Point coord, Sentiment sent) {
+        GridCell cell = getCell(coord);
+        if (cell.getBlockSentiment() != Sentiment.Unsure || sent == Sentiment.Unsure) {
+            throw new IllegalArgumentException("only confirming sentiments supported");
+        }
+
+        cell.setBlockSentiment(sent);
+        for (Point adj : coord.get8Neighbours()) {
+            GridCell neighbour = getCell(adj);
+            if (neighbour == null) continue;
+
+            if (sent == Sentiment.Blocked) {
+                neighbour.addNumAdjBlocked(1);
+            } else {
+                neighbour.addNumAdjEmpty(1);
+            }
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("Grid{");
-        for (int x = 0; x < xSize; x++){
+        for (int x = 0; x < xSize; x++) {
             builder.append("\n");
-            for(int y = 0; y< ySize; y++) {
-
+            for (int y = 0; y < ySize; y++) {
                 if (x == 0 && y == 0) {
                     builder.append("S");
                 } else if (x == xSize - 1 && y == ySize - 1) {
                     builder.append("G");
                 } else {
-                    if (this.getCell(new Point(x,y)).isBlocked()) {
+                    if (this.getCell(new Point(x, y)).isBlocked()) {
                         builder.append("X");
                     } else {
                         builder.append(" ");
