@@ -1,44 +1,26 @@
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class Robot {
     private Point current;
     private Point goal;
-    private Point restartPoint;
-    private boolean canSeeSideways;
-    private HashSet<GridCell> blocked;
-    private HashSet<GridCell> free;
-    private Grid grid;
+    private InferenceAgent agent;
+    private Grid kb; // knowledge base
     private SearchAlgo searchAlgo;
 
-    public Robot(Point start, Point goal, boolean canSeeSideways, Grid grid, SearchAlgo searchAlgo) {
+    public Robot(Point start, Point goal, InferenceAgent agent, Grid grid, SearchAlgo searchAlgo) {
         this.current = start;
-        this.restartPoint = this.current;
         this.goal = goal;
-        this.canSeeSideways = canSeeSideways;
-        this.blocked = new HashSet<>();
-        this.free = new HashSet<>();
-        this.free.add(grid.getCell(start)); // start cell is always known/assumed to be free
-        this.grid = grid;
+        this.agent = agent;
+        this.kb = grid;
         this.searchAlgo = searchAlgo;
+
+        kb.setSentiment(start, Sentiment.Free); // the agent starts off knowing that the start is unblocked
+        kb.getCell(start).setVisited(true);
+        this.agent.learn(this.kb, this.current);
     }
 
     public Point getLocation() {
-//        System.out.println("Curr:" + current);
-//        System.out.println("Restart:" + restartPoint);
-        if(current.equals(goal))
-            return goal;
-        return current.equals(restartPoint) ? current : restartPoint;
-
-    }
-
-    public Point getRestartPoint(){
-        return restartPoint;
-    }
-
-    public void setRestartPoint(Point pos){
-        restartPoint = pos;
+        return current;
     }
 
     public Point getGoal() {
@@ -49,24 +31,8 @@ public class Robot {
         current = pos;
     }
 
-    public HashSet<GridCell> getKnownObstacles() {
-        return blocked;
-    }
-
-    public HashSet<GridCell> getKnownFreeSpaces() {
-        return free;
-    }
-
-    public void addObstacle(GridCell obstacle) {
-        blocked.add(obstacle);
-    }
-
-    public void addFreeSpace(GridCell freeSpace) {
-        free.add(freeSpace);
-    }
-
-    public Grid getGrid() {
-        return grid;
+    public Grid getKnowledgeBase() {
+        return kb;
     }
 
     public SearchAlgo getSearchAlgo() {
@@ -76,64 +42,71 @@ public class Robot {
     // attempt to follow a path, updating known obstacles along the way
     // stops prematurely if it bumps into an obstacle
     // returns the number of steps succesfully moved
-    private int runPath(List<Point> path, int backtrackDistance) {
+    private Tuple<Integer, Boolean> runPath(List<Point> path) {
         int numStepsTaken = 0;
-        for(Point position : path) {
-            if(canSeeSideways) { // update obstacles based on fov
-                ArrayList<Point> directions = new ArrayList<>(4);
-                directions.add(new Point(current.f1 + 1, current.f2)); // right
-                directions.add(new Point(current.f1 - 1, current.f2)); // left
-                directions.add(new Point(current.f1, current.f2 - 1)); // up
-                directions.add(new Point(current.f1, current.f2 + 1)); // down
+        boolean bumped = false;
+        boolean obstructed = false;
+        while (!path.isEmpty() && !obstructed) {
+            Point position = path.get(0);
+            GridCell nextCell = kb.getCell(position);
 
-                for(Point direction : directions) {
-                    GridCell cell = grid.getCell(direction);
-                    if(cell != null) {
-                        if(cell.isBlocked()) addObstacle(cell);
-                        else addFreeSpace(cell);
-                    }
-                }
-            }
-
-            GridCell nextCell = grid.getCell(position);
-            if(nextCell.isBlocked()) { // if bump into an obstacle, stop
-                addObstacle(nextCell);
-                break;
+            // attempt to move into next space, and update KB accordingly
+            if (nextCell.isBlocked()) {
+                kb.setSentiment(position, Sentiment.Blocked);
+                bumped = true;
             } else {
-                numStepsTaken++;
-                addFreeSpace(nextCell);
+                kb.setSentiment(position, Sentiment.Free);
                 move(position);
-                if(numStepsTaken % backtrackDistance == 0){
-                    setRestartPoint(position);
+                nextCell.setVisited(true);
+                numStepsTaken++;
+                path.remove(0);
+            }
+            agent.learn(kb, current); // learn anything possible
+
+            // check if any steps on remaining path are confirmed to be blocked
+            for (Point p : path) {
+                if (kb.getCell(p).getBlockSentiment() == Sentiment.Blocked) {
+                    obstructed = true;
+                    break;
                 }
             }
         }
-        return numStepsTaken;
+
+        return new Tuple<>(numStepsTaken, bumped);
     }
 
     public GridWorldInfo run() {
-       return run(1);
-    }
+        GridWorldInfo gridWorldInfoGlobal = new GridWorldInfo(0, 0, null);
 
-    public GridWorldInfo run(int backtrackDistance) {
-        GridWorldInfo gridWorldInfoGlobal = new GridWorldInfo(0, 0, new ArrayList<>());
-        // loop while robot has not reached the destination
-        while(!getLocation().f1.equals(getGoal().f1) || !getLocation().f2.equals(getGoal().f2)) {
+        long start = System.nanoTime();
+        while (!current.equals(goal)) { // loop while robot has not reached the destination
             // find path
-            GridWorldInfo result = getSearchAlgo().search(getLocation(), getGoal(), getGrid(), getKnownObstacles()::contains);
+            gridWorldInfoGlobal.numPlans++;
+            GridWorldInfo result = searchAlgo.search(current, goal, kb,
+                    cell -> cell.getBlockSentiment() == Sentiment.Blocked);
 
             // if no path found, exit with failure
-            if(result == null || result.getPath() == null) {
-                gridWorldInfoGlobal.setPath(null);
-                gridWorldInfoGlobal.setTrajectoryLength(Double.NaN);
+            if (result == null || result.path == null) {
+                gridWorldInfoGlobal.trajectoryLength = Double.NaN;
                 return gridWorldInfoGlobal;
             }
 
             // attempt to travel down returned path, and update statistics
-            int stepsTaken = runPath(result.getPath(), backtrackDistance );
-            gridWorldInfoGlobal.addTrajectoryLength(stepsTaken);
-            gridWorldInfoGlobal.addCellsProcessed(result.getNumberOfCellsProcessed());
-            gridWorldInfoGlobal.getPath().addAll(result.getPath().subList(0, stepsTaken));
+            Tuple<Integer, Boolean> pair = runPath(result.path);
+            gridWorldInfoGlobal.trajectoryLength += pair.f1;
+            gridWorldInfoGlobal.numberOfCellsProcessed += result.numberOfCellsProcessed;
+            if (pair.f2) gridWorldInfoGlobal.numBumps++;
+        }
+        long end = System.nanoTime();
+        gridWorldInfoGlobal.runtime = end - start;
+
+        // count number of cells determined
+        for(int y = 0; y < kb.getYSize(); y++) {
+            for(int x = 0; x < kb.getXSize(); x++) {
+                if(kb.getCell(x, y).getBlockSentiment() != Sentiment.Unsure) {
+                    gridWorldInfoGlobal.numCellsDetermined++;
+                }
+            }
         }
 
         return gridWorldInfoGlobal;

@@ -90,11 +90,12 @@ public class Grid {
     }
 
     // confirms an unknown cell as blocked/empty and updates KB accordingly
+    // TODO: handle redundant updates
     public void setSentiment(Point coord, Sentiment sent) {
         GridCell cell = getCell(coord);
-        if (cell.getBlockSentiment() != Sentiment.Unsure || sent == Sentiment.Unsure) {
-            throw new IllegalArgumentException("only confirming sentiments supported");
-        }
+        // if (cell.getBlockSentiment() != Sentiment.Unsure || sent == Sentiment.Unsure) {
+        //     throw new IllegalArgumentException("only confirming sentiments supported");
+        // }
 
         cell.setBlockSentiment(sent);
         for (Point adj : coord.get8Neighbours()) {

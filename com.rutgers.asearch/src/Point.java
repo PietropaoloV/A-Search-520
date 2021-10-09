@@ -36,7 +36,7 @@ public class Point {
         if (obj == null || !(obj instanceof Point))
             return false;
         Point other = (Point) obj;
-        return this.f1 == other.f1 && this.f1 == other.f2;
+        return this.f1 == other.f1 && this.f2 == other.f2;
     }
 
     @Override
