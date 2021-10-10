@@ -23,6 +23,18 @@ public class Test {
         }
     }
 
+    public static void printMineSweeper(Grid world) {
+        for (int j = 0; j < world.getYSize(); j++) {
+            for (int i = 0; i < world.getXSize(); i++) {
+                GridCell cell = world.getCell(i, j);
+                System.out.print(cell.isBlocked() ?  "\u001B[31m" : "\u001B[0m"); // set color
+                System.out.print(cell.getNumSensedBlocked());
+            }
+            System.out.print('\n');
+        }
+        System.out.print("\u001B[0m");
+    }
+
     public static void main(String[] args) {
         int x = Integer.parseInt(args[0]);
         int y = Integer.parseInt(args[1]);
@@ -33,12 +45,15 @@ public class Test {
         Point goal = new Point(x-1, y-1);
 
         SearchAlgo algo = new AStarSearch(Heuristics::manhattanDistance);
+        InferenceAgent agent = BasicInferenceAgent::naiveLearn;
 
-        Robot robot = new Robot(start, goal, FOV::blindfolded, world, algo);
-        GridWorldInfo result = robot.run();
-        printResults(result, world);
+        // Robot robot = new Robot(start, goal, FOV::blindfolded, world, algo);
+        // GridWorldInfo result = robot.run();
+        // printResults(result, world);
 
-        Robot robot2 = new Robot(start, goal, FOV::canSeeSideways, world2, algo);
+        printMineSweeper(world);
+
+        Robot robot2 = new Robot(start, goal, agent, world2, algo);
         GridWorldInfo result2 = robot2.run();
         printResults(result2, world2);
     }

@@ -1,3 +1,5 @@
+import java.util.function.Consumer;
+
 public class Grid {
     private GridCell[] grid; // represent as flat array to make deep-copying easier
     private int xSize;
@@ -42,9 +44,8 @@ public class Grid {
                 }
 
                 // determine if cell is blocked
-                boolean isBlocked = (index == 0 || index == dimX * dimY - 1) ?
-                    false :
-                    generateIsBlocked(probabilityOfBlocked);
+                boolean isBlocked = (index == 0 || index == dimX * dimY - 1) ? false
+                        : generateIsBlocked(probabilityOfBlocked);
 
                 grid[index] = new GridCell(x, y, numAdj, isBlocked);
             }
@@ -56,8 +57,9 @@ public class Grid {
                 int index = y * dimX + x;
                 if (grid[index].isBlocked()) {
                     for (Point adj : new Point(x, y).get8Neighbours()) {
-                        if (!inBounds(adj.f1, adj.f2)) continue;
-                        grid[adj.f2 * dimX + adj.f1].addNumSensedBlocked(1);
+                        if (inBounds(adj.f1, adj.f2)) {
+                            grid[adj.f2 * dimX + adj.f1].addNumSensedBlocked(1);
+                        }
                     }
                 }
             }
@@ -90,23 +92,40 @@ public class Grid {
     }
 
     // confirms an unknown cell as blocked/empty and updates KB accordingly
-    // TODO: handle redundant updates
     public void setSentiment(Point coord, Sentiment sent) {
         GridCell cell = getCell(coord);
-        // if (cell.getBlockSentiment() != Sentiment.Unsure || sent == Sentiment.Unsure) {
-        //     throw new IllegalArgumentException("only confirming sentiments supported");
-        // }
+        if (cell.getBlockSentiment() == sent) return; // shortcut check
 
+        // first reset current cell's sentiment if already set
+        switch (cell.getBlockSentiment()) {
+            case Free:
+                forEachNeighbour(coord, nbr -> nbr.addNumAdjEmpty(-1));
+                break;
+            case Blocked:
+                forEachNeighbour(coord, nbr -> nbr.addNumAdjBlocked(-1));
+                break;
+            case Unsure:
+                break;
+        }
+
+        // set cell to new sentiment and update neighbours
         cell.setBlockSentiment(sent);
-        for (Point adj : coord.get8Neighbours()) {
-            GridCell neighbour = getCell(adj);
-            if (neighbour == null) continue;
+        switch (sent) {
+            case Free:
+                forEachNeighbour(coord, nbr -> nbr.addNumAdjEmpty(1));
+                break;
+            case Blocked:
+                forEachNeighbour(coord, nbr -> nbr.addNumAdjBlocked(1));
+                break;
+            case Unsure:
+                break;
+        }
+    }
 
-            if (sent == Sentiment.Blocked) {
-                neighbour.addNumAdjBlocked(1);
-            } else {
-                neighbour.addNumAdjEmpty(1);
-            }
+    public void forEachNeighbour(Point coord, Consumer<GridCell> action) {
+        for(Point adj : coord.get8Neighbours()) {
+            GridCell cell = getCell(adj);
+            if (cell != null) action.accept(cell);
         }
     }
 

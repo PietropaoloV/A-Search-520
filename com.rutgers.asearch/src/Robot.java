@@ -41,7 +41,7 @@ public class Robot {
 
     // attempt to follow a path, updating known obstacles along the way
     // stops prematurely if it bumps into an obstacle
-    // returns the number of steps succesfully moved
+    // returns the number of steps succesfully moved as well as if the robot bumped into something
     private Tuple<Integer, Boolean> runPath(List<Point> path) {
         int numStepsTaken = 0;
         boolean bumped = false;
