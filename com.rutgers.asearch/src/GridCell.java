@@ -1,35 +1,40 @@
-public class GridCell {
-    private int x;
-    private int y;
+public class GridCell implements Cloneable {
+    private final int x;
+    private final int y;
     private Sentiment blockSentiment;
-    private int numAdj;
-    private int numSensedBlocked;
-    private int numAdjBlocked;
-    private int numEmpty;
-    private int numAdjHidden;
+    private int numAdj; // N_x
+    private int numSensedBlocked; // C_x
+    private int numAdjBlocked; // B_x (confirmed blocked)
+    private int numAdjEmpty; // E_x (confirmed empty)
+    private int numAdjHidden; // H_x -> has no setter since it's determined by other fields
     private boolean isBlocked;
     private boolean isVisited;
 
-    public GridCell(int x, int y, boolean isBlocked) {
+    public GridCell(int x, int y, int numAdj, boolean isBlocked) {
         this.x = x;
         this.y = y;
+        this.numAdj = numAdj;
+        this.numAdjHidden = numAdj; // all cells start off hidden
         this.isBlocked = isBlocked;
+
+        // set default values
+        this.blockSentiment = Sentiment.Unsure; // all cells start off undetermined
+        this.numSensedBlocked = 0;
+        this.numAdjBlocked = 0;
+        this.numAdjEmpty = 0;
+        this.isVisited = false;
     }
 
     public int getX() {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public int getY() {
         return y;
     }
 
-    public void setY(int y) {
-        this.y = y;
+    public Point getLocation() {
+        return new Point(x, y);
     }
 
     public Sentiment getBlockSentiment() {
@@ -44,40 +49,34 @@ public class GridCell {
         return numAdj;
     }
 
-    public void setNumAdj(int numAdj) {
-        this.numAdj = numAdj;
-    }
-
     public int getNumSensedBlocked() {
         return numSensedBlocked;
     }
 
-    public void setNumSensedBlocked(int numSensedBlocked) {
-        this.numSensedBlocked = numSensedBlocked;
+    public void addNumSensedBlocked(int numSensedBlocked) {
+        this.numSensedBlocked += numSensedBlocked;
     }
 
     public int getNumAdjBlocked() {
         return numAdjBlocked;
     }
 
-    public void setNumAdjBlocked(int numAdjBlocked) {
-        this.numAdjBlocked = numAdjBlocked;
+    public void addNumAdjBlocked(int numAdjBlocked) {
+        this.numAdjBlocked += numAdjBlocked;
+        this.numAdjHidden -= numAdjBlocked;
     }
 
-    public int getNumEmpty() {
-        return numEmpty;
+    public int getNumAdjEmpty() {
+        return numAdjEmpty;
     }
 
-    public void setNumEmpty(int numEmpty) {
-        this.numEmpty = numEmpty;
+    public void addNumAdjEmpty(int numAdjEmpty) {
+        this.numAdjEmpty += numAdjEmpty;
+        this.numAdjHidden -= numAdjEmpty;
     }
 
     public int getNumAdjHidden() {
         return numAdjHidden;
-    }
-
-    public void setNumAdjHidden(int numAdjHidden) {
-        this.numAdjHidden = numAdjHidden;
     }
 
     public boolean isBlocked() {
@@ -94,5 +93,18 @@ public class GridCell {
 
     public void setVisited(boolean visited) {
         isVisited = visited;
+    }
+
+    // TODO: better way to do this?
+    @Override
+    public GridCell clone() {
+        GridCell copy = null;
+        try {
+            copy = (GridCell) super.clone();
+        } catch (CloneNotSupportedException e) {
+            // this should never be entered
+            System.err.println(e.toString());
+        }
+        return copy;
     }
 }

@@ -2,81 +2,80 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-public class AStarSearch implements SearchAlgo{
+public class AStarSearch implements SearchAlgo {
+    private BiFunction<Point, Point, Double> heuristic;
 
-    private BiFunction<Tuple<Integer, Integer>, Tuple<Integer, Integer>, Double> heuristic;
-
-
-    public AStarSearch(BiFunction<Tuple<Integer, Integer>, Tuple<Integer, Integer>, Double> heuristic) {
+    public AStarSearch(BiFunction<Point, Point, Double> heuristic) {
         this.heuristic = heuristic;
     }
 
     /**
-     * This runs the A* Search algorithm. Predicate is used to pass in a boolean evaluation function to check what spaces we have been to/are blocked or spaces that are free.
-     * Returns a GridWorldInfo Object {@link GridWorldInfo}.
-     * @param start Start Location
-     * @param end End Location
-     * @param grid Grid to Search
+     * This runs the A* Search algorithm. Predicate is used to pass in a boolean
+     * evaluation function to check what spaces we have been to/are blocked or
+     * spaces that are free. Returns a GridWorldInfo Object {@link GridWorldInfo}.
+     * 
+     * @param start     Start Location
+     * @param end       End Location
+     * @param grid      Grid to Search
      * @param isBlocked Function to check whether cells are blocked
      * @return
      */
-
     @Override
-    public GridWorldInfo search(Tuple<Integer, Integer> start, Tuple<Integer, Integer> end, Grid grid, Predicate<GridCell> isBlocked) {
+    public GridWorldInfo search(Point start, Point end, Grid grid, Predicate<GridCell> isBlocked) {
         GridCell startCell = grid.getCell(start);
         GridCell endCell = grid.getCell(end);
-        if (startCell == endCell || startCell == null || endCell == null) return null; // Checks invalid cells
+        if (startCell == endCell || startCell == null || endCell == null) // checks invalid input
+            throw new IllegalArgumentException("start/end cells coincide or are out of bounds");
 
         // create fringe and process start cell
-        PriorityQueue<GridCell> fringe = new PriorityQueue<>(new GridCellComparator()); // Priority Queue for reference
-        startCell.setCost(0);
-        startCell.setHeuristicCost(heuristic.apply(start, end));
-        startCell.setPrev(null);
-        fringe.add(startCell);
+        HashMap<GridCell, HeuristicData> dataMap = new HashMap<>();
+        PriorityQueue<HeuristicData> fringe = new PriorityQueue<>(new GridCellComparator());
+        HeuristicData startData = new HeuristicData(startCell, end, null, 0);
+        dataMap.put(startCell, startData);
+        fringe.add(startData);
 
         // begin processing cells
-        GridCell currentCell;
+        HeuristicData currentNode;
         double previousCost;
-        HashSet<GridCell> discoveredCells = new HashSet<>();
-        discoveredCells.add(startCell);
         int numberOfCellsProcessed = 0;
         while (!fringe.isEmpty()) {
-            numberOfCellsProcessed++; //Cell Processed Counter
-            currentCell = fringe.poll();// Get First in Queue
-            previousCost = currentCell.getCost(); //Previous cost of the cell
-            if (currentCell.equals(endCell)) { //check if end then start return obj creation
+            numberOfCellsProcessed++; // Cell Processed Counter
+            currentNode = fringe.poll();// Get First in Queue
+            previousCost = currentNode.getG(); // Previous g-cost of the cell
+
+            if (currentNode.getLocation().equals(end)) { // check if end then start return obj creation
                 // goal found, reconstruct path
-                LinkedList<Tuple<Integer, Integer>> path = new LinkedList<>();
-                while(currentCell.getPrev() != null) { // while we have not reached the start cell...
-                    path.push(currentCell.getLocation());
-                    currentCell = currentCell.getPrev();
+                LinkedList<Point> path = new LinkedList<>();
+                while (currentNode.getPrev() != null) { // while we have not reached the start cell...
+                    path.push(currentNode.getLocation());
+                    currentNode = currentNode.getPrev();
                 }
                 return new GridWorldInfo(previousCost, numberOfCellsProcessed, path);
             }
 
-            // else, generate the children of currentCell
-            ArrayList<Tuple<Integer, Integer>> directions = new ArrayList<>(4);
-            directions.add(new Tuple<>(currentCell.getX() + 1, currentCell.getY())); // right
-            directions.add(new Tuple<>(currentCell.getX() - 1, currentCell.getY())); // left
-            directions.add(new Tuple<>(currentCell.getX(), currentCell.getY() - 1)); // up
-            directions.add(new Tuple<>(currentCell.getX(), currentCell.getY() + 1)); // down
+            // else, generate the children of currentNode
+            Point[] directions = currentNode.getLocation().get4Neighbours();
 
             // process each child
-            for(Tuple<Integer, Integer> direction : directions) {
+            for (Point direction : directions) {
                 GridCell child = grid.getCell(direction);
-                if(child == null || isBlocked.test(child)) continue; // check that cell is valid
-                if(!discoveredCells.contains(child)) { // first time processing this cell -> initialize and insert into fringe
-                    child.setHeuristicCost(heuristic.apply(child.getLocation(), end));
-                    child.setCost(previousCost + 1);
-                    child.setPrev(currentCell);
-                    fringe.add(child);
-                    discoveredCells.add(child);
-                } else if(previousCost + 1 < child.getCost()) { // already in queue -> check if priority needs to be updated
-                    boolean check = fringe.remove(child);
-                    // if(check == false) System.out.println("heuristic consistency violated");
-                    child.setCost(previousCost + 1);
-                    child.setPrev(currentCell);
-                    fringe.add(child);
+                if (child == null || isBlocked.test(child))
+                    continue; // check that cell is valid
+                if (!dataMap.containsKey(child)) {
+                    // first time processing this cell -> initialize and insert into fringe
+                    HeuristicData data = new HeuristicData(child, end, currentNode, previousCost + 1);
+                    fringe.add(data);
+                    dataMap.put(child, data);
+                } else {
+                    HeuristicData childData = dataMap.get(child);
+
+                    // already in queue -> check if priority needs to be updated
+                    if (previousCost + 1 < childData.getG()) {
+                        fringe.remove(childData);
+                        childData.setG(previousCost + 1);
+                        childData.setPrev(currentNode);
+                        fringe.add(childData);
+                    }
                 }
             }
         }
@@ -85,54 +84,64 @@ public class AStarSearch implements SearchAlgo{
         return new GridWorldInfo(Double.NaN, numberOfCellsProcessed, null);
     }
 
-    class GridCellComparator implements Comparator<HeuristicData> { //Custom Comparator for Priority Queue
-
+    class GridCellComparator implements Comparator<HeuristicData> { // Custom Comparator for Priority Queue
         @Override
         public int compare(HeuristicData o1, HeuristicData o2) {
-            Double cost1 = o1.getCost() + o1.getHeuristicCost();
-            Double cost2 = o2.getCost() + o2.getHeuristicCost();
-            if(Double.compare(cost1, cost2) == 0) { // prefer higher g-cost over higher h-cost
-                return Double.compare(o1.getHeuristicCost(), o2.getHeuristicCost());
+            if (Double.compare(o1.getCost(), o2.getCost()) == 0) {
+                return Double.compare(o1.getH(), o2.getH()); // prefer higher g-cost over higher h-cost
             } else {
-                return Double.compare(cost1, cost2);
+                return Double.compare(o1.getCost(), o2.getCost());
             }
         }
     }
 
     class HeuristicData {
-        boolean isProcessed;
-        int g;
-        int f;
-        int h;
+        private final Point location;
+        private HeuristicData prev;
+        private double f;
+        private double g;
+        private double h;
 
-        public HeuristicData() {
-            this.isProcessed = false;
+        public HeuristicData(GridCell cell, Point end, HeuristicData prev, double g) {
+            this.location = cell.getLocation();
+            this.prev = prev;
+            this.g = g;
+            this.h = heuristic.apply(this.location, end);
+            this.f = this.g + this.h;
         }
 
-        public boolean isProcessed() {
-            return isProcessed;
+        public Point getLocation() {
+            return location;
         }
 
-        public void setProcessed(boolean processed) {
-            isProcessed = processed;
+        public HeuristicData getPrev() {
+            return prev;
         }
 
+        public void setPrev(HeuristicData prev) {
+            this.prev = prev;
+        }
 
-        public int getCost(){
+        public double getCost() { // returns the total f-cost (NOT the g-cost)
+            return f;
+        }
+
+        public double getG() {
+            return g;
+        }
+
+        public void setG(double g) {
+            this.g = g;
+            this.f = this.f + this.g; // also update f-cost
+        }
+
+        public double getH() {
             return h;
         }
 
-        public void setG(int g) {
-            this.g = g;
-        }
-        public int getF() {
-            return f;
-        }
-        public void setF(int f) {
-            this.f = f;
-        }
-        public void setH(int h) {
+        public void setH(double h) {
             this.h = h;
+            this.f = this.f + this.g; // also update f-cost
         }
     }
 }

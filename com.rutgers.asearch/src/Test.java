@@ -1,33 +1,38 @@
-import java.util.*;
-import java.util.function.Predicate;
-
 // just tests the search algos to make sure they work
 // usage: java Test xSize ySize blockedProbability%
 public class Test {
-    public static void printResults(GridWorldInfo result, Grid world, Robot robot, Predicate<GridCell> isBlocked) {
-        System.out.println("num cells expanded: " + result.getNumberOfCellsProcessed());
-        System.out.println("trajectory length: " + result.getTrajectoryLength());
+    public static void printResults(GridWorldInfo result, Grid world) {
+        System.out.println("num cells expanded: " + result.numberOfCellsProcessed);
+        System.out.println("trajectory length: " + result.trajectoryLength);
+        System.out.println("number of bumps: " + result.numBumps);
+        System.out.println("number of (re)-plans: " + result.numPlans);
+        System.out.println("number of cells determined: " + result.numCellsDetermined);
+        System.out.println("runtime: " + result.runtime);
 
-        HashSet<GridCell> trajectory = new HashSet<>();
-        trajectory.add(world.getCell(new Tuple<Integer, Integer>(0, 0)));
-        if(result.getPath() == null) {
-            System.out.println("Path not found.");
-        } else {
-            for(Tuple<Integer, Integer> coord : result.getPath()) {
-                trajectory.add(world.getCell(coord));
-            }
-        }
         for(int j = 0; j < world.getYSize(); ++j) {
             for(int i = 0; i < world.getXSize(); ++i) {
-                GridCell cell = world.getCell(new Tuple<>(i, j));
+                GridCell cell = world.getCell(i, j);
                 String symbol = "o"; // default symbol
-                if(trajectory.contains(cell)) symbol = "\u001B[36m-\u001B[0m";
-                else if(robot.getKnownObstacles().contains(cell)) symbol = "\u001B[33mx\u001B[0m";
-                else if(isBlocked.test(cell)) symbol = "\u001B[31mx\u001B[0m";
+                if(cell.isVisited()) symbol = "\u001B[36m-\u001B[0m";
+                else if(cell.getBlockSentiment() == Sentiment.Free) symbol = "\u001B[32mo\u001B[0m";
+                else if(cell.getBlockSentiment() == Sentiment.Blocked) symbol = "\u001B[33mx\u001B[0m";
+                else if(cell.isBlocked()) symbol = "\u001B[31mx\u001B[0m";
                 System.out.print(symbol);
             }
             System.out.print('\n');
         }
+    }
+
+    public static void printMineSweeper(Grid world) {
+        for (int j = 0; j < world.getYSize(); j++) {
+            for (int i = 0; i < world.getXSize(); i++) {
+                GridCell cell = world.getCell(i, j);
+                System.out.print(cell.isBlocked() ?  "\u001B[31m" : "\u001B[0m"); // set color
+                System.out.print(cell.getNumSensedBlocked());
+            }
+            System.out.print('\n');
+        }
+        System.out.print("\u001B[0m");
     }
 
     public static void main(String[] args) {
@@ -35,24 +40,21 @@ public class Test {
         int y = Integer.parseInt(args[1]);
         int prob = Integer.parseInt(args[2]);
         Grid world = new Grid(x, y, prob);
+        Grid world2 = new Grid(world);
+        Point start = new Point(0, 0);
+        Point goal = new Point(x-1, y-1);
 
-        // test repeated A* search
-        System.out.println("Testing Repeated A*...");
-        SearchAlgo aso = new AStarSearch(Heuristics::manhattanDistance);
-        Tuple<Integer, Integer> start = new Tuple<>(0, 0);
-        Tuple<Integer, Integer> end = new Tuple<>(x-1, y-1);
-        Robot robot = new Robot(start, end, true, world, aso);
-        GridWorldInfo result = robot.run();
-        printResults(result, world, robot, cell -> cell.isBlocked());
-        System.out.println();
+        SearchAlgo algo = new AStarSearch(Heuristics::manhattanDistance);
+        InferenceAgent agent = BasicInferenceAgent::naiveLearn;
 
-        // test regular A* search
-        System.out.println("Running A* on discovered gridworld...");
-        Predicate<GridCell> discoveredAndFree = robot.getKnownFreeSpaces()::contains;
-        Predicate<GridCell> undiscoveredOrBlocked = discoveredAndFree.negate();
-        result = aso.search(start, end, world, undiscoveredOrBlocked);
-        printResults(result, world, robot, undiscoveredOrBlocked);
+        // Robot robot = new Robot(start, goal, FOV::blindfolded, world, algo);
+        // GridWorldInfo result = robot.run();
+        // printResults(result, world);
 
+        printMineSweeper(world);
 
+        Robot robot2 = new Robot(start, goal, agent, world2, algo);
+        GridWorldInfo result2 = robot2.run();
+        printResults(result2, world2);
     }
 }

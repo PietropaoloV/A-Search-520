@@ -6,7 +6,7 @@ public class Heuristics {
      * @param goalCoordinate Goal Coordinate
      * @return Returns a double value
      */
-    public static double euclideanDistance(Tuple<Integer, Integer> currentCoordinate, Tuple<Integer, Integer> goalCoordinate) {
+    public static double euclideanDistance(Point currentCoordinate, Point goalCoordinate) {
         double tempX = Math.pow(currentCoordinate.f1 - goalCoordinate.f1, 2);
         double tempY = Math.pow(currentCoordinate.f2 - goalCoordinate.f2, 2);
 
@@ -20,7 +20,7 @@ public class Heuristics {
      * @param goalCoordinate Goal Coordinate
      * @return Returns a double value
      */
-    public static double manhattanDistance(Tuple<Integer, Integer> currentCoordinate, Tuple<Integer, Integer> goalCoordinate) {
+    public static double manhattanDistance(Point currentCoordinate, Point goalCoordinate) {
         double tempX = Math.abs(currentCoordinate.f1 - goalCoordinate.f1);
         double tempY = Math.abs(currentCoordinate.f2 - goalCoordinate.f2);
 
@@ -34,7 +34,7 @@ public class Heuristics {
      * @param goalCoordinate Goal Coordinate
      * @return Returns a double value
      */
-    public static double chebyshevDistance(Tuple<Integer, Integer> currentCoordinate, Tuple<Integer, Integer> goalCoordinate) {
+    public static double chebyshevDistance(Point currentCoordinate, Point goalCoordinate) {
         double tempX = Math.abs(currentCoordinate.f1 - goalCoordinate.f1);
         double tempY = Math.abs(currentCoordinate.f2 - goalCoordinate.f2);
 
