@@ -11,7 +11,7 @@ public class BasicInferenceAgent implements InferenceAgent {
         // the possible cells with updated sentiments are the current location and its nbrs;
         // need to run propagateInferences on all of them
         propagateInferences(kb, location);
-        kb.forEachNeighbour(location, nbr -> propagateInferences(kb, new Point(nbr.getX(), nbr.getY())));
+        kb.forEachNeighbour(location, nbr -> propagateInferences(kb, nbr.getLocation()));
     }
 
     // backup of inefficient version to verify that behaviour is the same
@@ -29,16 +29,16 @@ public class BasicInferenceAgent implements InferenceAgent {
                     // check each condition
                     if (cell.getNumAdjBlocked() == cell.getNumSensedBlocked()) { // C_x = B_x
                         done = false;
-                        kb.forEachNeighbour(new Point(x, y), nbr -> {
+                        kb.forEachNeighbour(cell.getLocation(), nbr -> {
                             if (nbr.getBlockSentiment() == Sentiment.Unsure) {
-                                kb.setSentiment(new Point(nbr.getX(), nbr.getY()), Sentiment.Free);
+                                kb.setSentiment(nbr.getLocation(), Sentiment.Free);
                             }
                         });
                     } else if (cell.getNumAdjEmpty() == cell.getNumSensedEmpty()) { // N_x - C_x = E_x
                         done = false;
-                        kb.forEachNeighbour(new Point(x, y), nbr -> {
+                        kb.forEachNeighbour(cell.getLocation(), nbr -> {
                             if (nbr.getBlockSentiment() == Sentiment.Unsure) {
-                                kb.setSentiment(new Point(nbr.getX(), nbr.getY()), Sentiment.Blocked);
+                                kb.setSentiment(nbr.getLocation(), Sentiment.Blocked);
                             }
                         });
                     }

@@ -61,7 +61,7 @@ public class Grid {
             for (int x = 0; x < dimX; x++) {
                 int index = y * dimX + x;
                 if (grid[index].isBlocked()) {
-                    for (Point adj : new Point(x, y).get8Neighbours()) {
+                    for (Point adj : grid[index].getLocation().get8Neighbours()) {
                         if (inBounds(adj.f1, adj.f2)) {
                             grid[adj.f2 * dimX + adj.f1].addNumSensedBlocked(1);
                         }
@@ -145,7 +145,7 @@ public class Grid {
                 } else if (x == xSize - 1 && y == ySize - 1) {
                     builder.append("G");
                 } else {
-                    if (this.getCell(new Point(x, y)).isBlocked()) {
+                    if (this.getCell(x, y).isBlocked()) {
                         builder.append("X");
                     } else {
                         builder.append(" ");

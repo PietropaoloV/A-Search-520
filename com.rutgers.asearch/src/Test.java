@@ -57,17 +57,17 @@ public class Test {
 
         SearchAlgo algo = new AStarSearch(Heuristics::manhattanDistance);
         InferenceAgent agent = new BasicInferenceAgent();
-        InferenceAgent oldAgent = BasicInferenceAgent::naiveLearn;
+        InferenceAgent betterAgent = new BetterInferenceAgent();
 
-        System.out.println("New version:");
+        System.out.println("Example version:");
         Robot robot = new Robot(start, goal, agent, world, algo);
         GridWorldInfo result = robot.run();
         printResults(result);
         // printWorld(world);
         System.out.println();
 
-        System.out.println("Old version:");
-        Robot robot2 = new Robot(start, goal, oldAgent, world2, algo);
+        System.out.println("'Better' version:");
+        Robot robot2 = new Robot(start, goal, betterAgent, world2, algo);
         GridWorldInfo result2 = robot2.run();
         printResults(result2);
         // printWorld(world2);
