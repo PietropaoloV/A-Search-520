@@ -57,7 +57,7 @@ public class Robot {
             } else {
                 kb.setSentiment(position, Sentiment.Free);
                 move(position);
-                nextCell.setVisited(true);
+                nextCell.setVisited(true); // mark cell as visited (implies we've sensed the info in that cell)
                 numStepsTaken++;
                 path.remove(0);
             }

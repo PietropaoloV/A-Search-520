@@ -1,14 +1,16 @@
 // just tests the search algos to make sure they work
 // usage: java Test xSize ySize blockedProbability%
 public class Test {
-    public static void printResults(GridWorldInfo result, Grid world) {
+    public static void printResults(GridWorldInfo result) {
         System.out.println("num cells expanded: " + result.numberOfCellsProcessed);
         System.out.println("trajectory length: " + result.trajectoryLength);
         System.out.println("number of bumps: " + result.numBumps);
         System.out.println("number of (re)-plans: " + result.numPlans);
         System.out.println("number of cells determined: " + result.numCellsDetermined);
         System.out.println("runtime: " + result.runtime);
-
+    }
+    
+    public static void printWorld(Grid world) {
         for(int j = 0; j < world.getYSize(); ++j) {
             for(int i = 0; i < world.getXSize(); ++i) {
                 GridCell cell = world.getCell(i, j);
@@ -20,7 +22,7 @@ public class Test {
                 System.out.print(symbol);
             }
             System.out.print('\n');
-        }
+        }      
     }
 
     public static void printMineSweeper(Grid world) {
@@ -46,15 +48,17 @@ public class Test {
 
         SearchAlgo algo = new AStarSearch(Heuristics::manhattanDistance);
         InferenceAgent agent = BasicInferenceAgent::naiveLearn;
+        InferenceAgent betterAgent = BetterInferenceAgent::naiveLearn;
 
-        // Robot robot = new Robot(start, goal, FOV::blindfolded, world, algo);
-        // GridWorldInfo result = robot.run();
-        // printResults(result, world);
+        Robot robot = new Robot(start, goal, agent, world, algo);
+        GridWorldInfo result = robot.run();
+        printResults(result);
+        // printWorld(world);
+        System.out.println();
 
-        printMineSweeper(world);
-
-        Robot robot2 = new Robot(start, goal, agent, world2, algo);
+        Robot robot2 = new Robot(start, goal, betterAgent, world2, algo);
         GridWorldInfo result2 = robot2.run();
-        printResults(result2, world2);
+        printResults(result2);
+        // printWorld(world2);
     }
 }
