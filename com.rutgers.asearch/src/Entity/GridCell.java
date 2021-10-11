@@ -1,3 +1,8 @@
+package Entity;
+
+import Utility.Point;
+import Utility.Sentiment;
+
 public class GridCell implements Cloneable {
     private final int x;
     private final int y;
@@ -80,7 +85,7 @@ public class GridCell implements Cloneable {
     }
 
     public boolean isBlocked() {
-        return isBlocked;
+        return isBlocked || blockSentiment == Sentiment.Blocked;
     }
 
     public void setBlocked(boolean blocked) {

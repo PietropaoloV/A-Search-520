@@ -1,3 +1,11 @@
+package Entity;
+
+import Agents.InferenceAgent;
+import Algorithms.SearchAlgo;
+import Utility.Point;
+import Utility.Sentiment;
+import Utility.Tuple;
+
 import java.util.List;
 
 public class Robot {
@@ -83,7 +91,7 @@ public class Robot {
             // find path
             gridWorldInfoGlobal.numPlans++;
             GridWorldInfo result = searchAlgo.search(current, goal, kb,
-                    cell -> cell.getBlockSentiment() == Sentiment.Blocked);
+                    cell -> cell.isBlocked());
 
             // if no path found, exit with failure
             if (result == null || result.path == null) {

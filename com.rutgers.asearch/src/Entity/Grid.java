@@ -1,3 +1,8 @@
+package Entity;
+
+import Utility.Point;
+import Utility.Sentiment;
+
 import java.util.function.Consumer;
 
 public class Grid {
@@ -122,8 +127,8 @@ public class Grid {
         }
     }
 
-    public void forEachNeighbour(Point coord, Consumer<GridCell> action) {
-        for(Point adj : coord.get8Neighbours()) {
+    public void forEachNeighbour(Point cord, Consumer<GridCell> action) {
+        for(Point adj : cord.get8Neighbours()) {
             GridCell cell = getCell(adj);
             if (cell != null) action.accept(cell);
         }
@@ -131,7 +136,7 @@ public class Grid {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("Grid{");
+        StringBuilder builder = new StringBuilder("Entity.Grid{");
         for (int x = 0; x < xSize; x++) {
             builder.append("\n");
             for (int y = 0; y < ySize; y++) {

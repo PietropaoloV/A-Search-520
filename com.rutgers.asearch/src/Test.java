@@ -1,3 +1,13 @@
+import Agents.BasicInferenceAgent;
+import Agents.InferenceAgent;
+import Algorithms.AStarSearch;
+import Algorithms.SearchAlgo;
+import Entity.*;
+import Utility.Heuristics;
+import Agents.NaiveAgent;
+import Utility.Point;
+import Utility.Sentiment;
+
 // just tests the search algos to make sure they work
 // usage: java Test xSize ySize blockedProbability%
 public class Test {
@@ -45,13 +55,15 @@ public class Test {
         Point goal = new Point(x-1, y-1);
 
         SearchAlgo algo = new AStarSearch(Heuristics::manhattanDistance);
-        InferenceAgent agent = BasicInferenceAgent::naiveLearn;
-
-        // Robot robot = new Robot(start, goal, FOV::blindfolded, world, algo);
-        // GridWorldInfo result = robot.run();
-        // printResults(result, world);
-
+        InferenceAgent agent = new BasicInferenceAgent();
+        InferenceAgent agentBlindfold = new NaiveAgent();
         printMineSweeper(world);
+
+         Entity.Robot robot = new Entity.Robot(start, goal, agentBlindfold, world, algo);
+         Entity.GridWorldInfo result = robot.run();
+         printResults(result, world);
+
+
 
         Robot robot2 = new Robot(start, goal, agent, world2, algo);
         GridWorldInfo result2 = robot2.run();

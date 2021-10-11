@@ -1,3 +1,5 @@
+package Utility;
+
 public enum Sentiment {
     Free     (1), // calls constructor with value 1
     Unsure   (0), // calls constructor with value 0

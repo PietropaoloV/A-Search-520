@@ -1,3 +1,7 @@
+package Entity;
+
+import Utility.Point;
+
 import java.util.List;
 
 public class GridWorldInfo {
@@ -9,7 +13,7 @@ public class GridWorldInfo {
     public int numCellsDetermined;
     public long runtime;
 
-    List<Point> path; // path does not include start cell
+    public List<Point> path; // path does not include start cell
 
     public GridWorldInfo(double trajectoryLength, int numberOfCellsProcessed, List<Point> path) {
         this.trajectoryLength = trajectoryLength;
@@ -23,4 +27,6 @@ public class GridWorldInfo {
         this.numCellsDetermined = 0;
         this.runtime = 0;
     }
+
+
 }

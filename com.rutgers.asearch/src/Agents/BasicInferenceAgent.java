@@ -1,5 +1,13 @@
-public class BasicInferenceAgent {
-    public static void naiveLearn(Grid kb, Point location) {
+package Agents;
+
+import Entity.Grid;
+import Entity.GridCell;
+import Utility.Point;
+import Utility.Sentiment;
+
+public class BasicInferenceAgent implements InferenceAgent{
+    @Override
+    public void learn(Grid kb, Point location) {
         boolean done = false;
         while (!done) { // keep iterating until no more updates are made
             done = true;
