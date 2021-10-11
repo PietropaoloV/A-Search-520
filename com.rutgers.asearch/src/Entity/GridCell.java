@@ -14,13 +14,15 @@ public class GridCell implements Cloneable {
     private int numAdjHidden; // H_x -> has no setter since it's determined by other fields
     private boolean isBlocked;
     private boolean isVisited;
+    private Grid owner; // used for lazy copying
 
-    public GridCell(int x, int y, int numAdj, boolean isBlocked) {
+    public GridCell(int x, int y, int numAdj, boolean isBlocked, Grid owner) {
         this.x = x;
         this.y = y;
         this.numAdj = numAdj;
         this.numAdjHidden = numAdj; // all cells start off hidden
         this.isBlocked = isBlocked;
+        this.owner = owner;
 
         // set default values
         this.blockSentiment = Sentiment.Unsure; // all cells start off undetermined
@@ -102,6 +104,14 @@ public class GridCell implements Cloneable {
 
     public void setVisited(boolean visited) {
         isVisited = visited;
+    }
+
+    protected Grid getOwner() {
+        return owner;
+    }
+
+    protected void setOwner(Grid owner) {
+        this.owner = owner;
     }
 
     // TODO: better way to do this?

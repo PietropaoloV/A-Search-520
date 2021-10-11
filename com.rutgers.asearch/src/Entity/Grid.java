@@ -16,14 +16,16 @@ public class Grid {
         this.grid = generateGrid(xSize, ySize, probability);
     }
 
-    // deep copy constructor
-    public Grid(Grid other) {
+    // copy constructor (when deep=false, use lazy copying with getCell/setCell)
+    public Grid(Grid other, boolean deep) {
         this.xSize = other.getXSize();
         this.ySize = other.getYSize();
-        this.grid = new GridCell[xSize * ySize];
+        this.grid = other.getGrid().clone();
 
-        for (int i = 0; i < grid.length; i++) {
-            this.grid[i] = (GridCell) other.grid[i].clone();
+        if (deep) {
+            for (int i = 0; i < grid.length; i++) {
+                this.grid[i] = (GridCell) other.grid[i].clone();
+            }
         }
     }
 
@@ -52,7 +54,7 @@ public class Grid {
                 boolean isBlocked = (index == 0 || index == dimX * dimY - 1) ? false
                         : generateIsBlocked(probabilityOfBlocked);
 
-                grid[index] = new GridCell(x, y, numAdj, isBlocked);
+                grid[index] = new GridCell(x, y, numAdj, isBlocked, this);
             }
         }
 
@@ -80,8 +82,20 @@ public class Grid {
         return null;
     }
 
+    // IMPORTANT: use this in a read-only fashion
     public GridCell getCell(Point coord) {
         return getCell(coord.f1, coord.f2);
+    }
+
+    // IMPORTANT: use this when you intend to modify the cell being returned
+    public GridCell setCell(Point coord) {
+        GridCell cell = getCell(coord);
+        if (cell != null && cell.getOwner() != this) { // the cell belongs to a different grid
+            GridCell copy = cell.clone(); // clone it to avoid mangling the other grid
+            copy.setOwner(this); // make this grid the new owner
+            grid[coord.f2 * getXSize() + coord.f1] = copy;
+        }
+        return getCell(coord);
     }
 
     public GridCell[] getGrid() {
@@ -98,8 +112,9 @@ public class Grid {
 
     // confirms an unknown cell as blocked/empty and updates KB accordingly
     public void setSentiment(Point coord, Sentiment sent) {
-        GridCell cell = getCell(coord);
-        if (cell.getBlockSentiment() == sent) return; // shortcut check
+        if (getCell(coord).getBlockSentiment() == sent)
+            return; // shortcut check
+        GridCell cell = setCell(coord);
 
         // first reset current cell's sentiment if already set
         switch (cell.getBlockSentiment()) {
@@ -128,9 +143,10 @@ public class Grid {
     }
 
     public void forEachNeighbour(Point coord, Consumer<GridCell> action) {
-        for(Point adj : coord.get8Neighbours()) {
-            GridCell cell = getCell(adj);
-            if (cell != null) action.accept(cell);
+        for (Point adj : coord.get8Neighbours()) {
+            GridCell cell = setCell(adj);
+            if (cell != null)
+                action.accept(cell);
         }
     }
 

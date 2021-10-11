@@ -51,7 +51,7 @@ public class Test {
         int y = Integer.parseInt(args[1]);
         int prob = Integer.parseInt(args[2]);
         Grid world = new Grid(x, y, prob);
-        Grid world2 = new Grid(world);
+        Grid world2 = new Grid(world, true);
         Point start = new Point(0, 0);
         Point goal = new Point(x - 1, y - 1);
 

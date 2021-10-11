@@ -45,7 +45,7 @@ public class BetterInferenceAgent implements InferenceAgent {
                     }
 
                     // test if setting nbr -> blocked yields a contradiction
-                    Grid copy = new Grid(kb); // make copy so original grid isn't mangled up
+                    Grid copy = new Grid(kb, false); // make shallow copy so original grid isn't mangled up
                     copy.setSentiment(adj, Sentiment.Blocked);
                     boolean status = propagateInferences(copy, adj);
                     if (status == false) { // contradiction found -> nbr is empty
@@ -55,7 +55,7 @@ public class BetterInferenceAgent implements InferenceAgent {
                     }
 
                     // test if setting nbr -> empty yields a contradiction
-                    copy = new Grid(kb);
+                    copy = new Grid(kb, false);
                     copy.setSentiment(adj, Sentiment.Free);
                     status = propagateInferences(copy, adj);
                     if (status == false) { // contradiction found -> nbr is blocked

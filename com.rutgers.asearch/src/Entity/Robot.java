@@ -23,7 +23,7 @@ public class Robot {
         this.searchAlgo = searchAlgo;
 
         kb.setSentiment(start, Sentiment.Free); // the agent starts off knowing that the start is unblocked
-        kb.getCell(start).setVisited(true);
+        kb.setCell(start).setVisited(true);
         this.agent.learn(this.kb, this.current);
     }
 
