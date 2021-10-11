@@ -14,9 +14,8 @@ public class Main {
     /**
      * Main Execution Method
      *
-     * @param args Input arguments X - Gird X size, Y - Entity.Grid Y size, Iterations - Number of Iterations (defaults to 100)
+     * @param args Input arguments X - Grid X size, Y - Entity.Grid Y size, Iterations - Number of Iterations (defaults to 100)
      */
-    // Input args: x, y, number of iterations
     public static void main(String[] args) {
         // int x = Integer.parseInt(args[0]);
         // int y = Integer.parseInt(args[1]);

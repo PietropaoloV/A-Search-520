@@ -58,6 +58,10 @@ public class GridCell implements Cloneable {
         return numSensedBlocked;
     }
 
+    public int getNumSensedEmpty() {
+        return numAdj - numSensedBlocked;
+    }
+
     public void addNumSensedBlocked(int numSensedBlocked) {
         this.numSensedBlocked += numSensedBlocked;
     }

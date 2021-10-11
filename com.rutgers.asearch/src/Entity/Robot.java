@@ -91,7 +91,7 @@ public class Robot {
             // find path
             gridWorldInfoGlobal.numPlans++;
             GridWorldInfo result = searchAlgo.search(current, goal, kb,
-                    cell -> cell.isBlocked());
+                    cell -> cell.getBlockSentiment() == Sentiment.Blocked);
 
             // if no path found, exit with failure
             if (result == null || result.path == null) {

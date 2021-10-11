@@ -127,8 +127,8 @@ public class Grid {
         }
     }
 
-    public void forEachNeighbour(Point cord, Consumer<GridCell> action) {
-        for(Point adj : cord.get8Neighbours()) {
+    public void forEachNeighbour(Point coord, Consumer<GridCell> action) {
+        for(Point adj : coord.get8Neighbours()) {
             GridCell cell = getCell(adj);
             if (cell != null) action.accept(cell);
         }
