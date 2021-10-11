@@ -1,3 +1,5 @@
+package Utility;
+
 public class Heuristics {
     /**
      * This program implements the euclidean distance calculation for heuristic cost

@@ -1,3 +1,10 @@
+package Algorithms;
+
+import Entity.Grid;
+import Entity.GridCell;
+import Entity.GridWorldInfo;
+import Utility.Point;
+
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
@@ -12,11 +19,11 @@ public class AStarSearch implements SearchAlgo {
     /**
      * This runs the A* Search algorithm. Predicate is used to pass in a boolean
      * evaluation function to check what spaces we have been to/are blocked or
-     * spaces that are free. Returns a GridWorldInfo Object {@link GridWorldInfo}.
+     * spaces that are free. Returns a Entity.GridWorldInfo Object {@link GridWorldInfo}.
      * 
      * @param start     Start Location
      * @param end       End Location
-     * @param grid      Grid to Search
+     * @param grid      Entity.Grid to Search
      * @param isBlocked Function to check whether cells are blocked
      * @return
      */
@@ -88,7 +95,7 @@ public class AStarSearch implements SearchAlgo {
         @Override
         public int compare(HeuristicData o1, HeuristicData o2) {
             if (Double.compare(o1.getCost(), o2.getCost()) == 0) {
-                return Double.compare(o1.getH(), o2.getH()); // prefer higher g-cost over higher h-cost
+                return Double.compare(o1.getH(), o2.getH()); // prefer higher f-cost over higher h-cost
             } else {
                 return Double.compare(o1.getCost(), o2.getCost());
             }
@@ -109,7 +116,9 @@ public class AStarSearch implements SearchAlgo {
             this.h = heuristic.apply(this.location, end);
             this.f = this.g + this.h;
         }
-
+        private void update(){
+            this.f = this.f + this.g; // also update f-cost
+        }
         public Point getLocation() {
             return location;
         }
@@ -132,7 +141,7 @@ public class AStarSearch implements SearchAlgo {
 
         public void setG(double g) {
             this.g = g;
-            this.f = this.f + this.g; // also update f-cost
+            update();
         }
 
         public double getH() {
@@ -141,7 +150,7 @@ public class AStarSearch implements SearchAlgo {
 
         public void setH(double h) {
             this.h = h;
-            this.f = this.f + this.g; // also update f-cost
+            update();
         }
     }
 }

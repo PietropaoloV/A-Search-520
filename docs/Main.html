@@ -47,8 +47,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="Heuristics.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="Robot.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="Utility.Heuristics.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="Entity.Robot.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="index.html?Main.html" target="_top">Frames</a></li>
@@ -144,10 +144,10 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static <a href="Grid.html" title="class in &lt;Unnamed&gt;">Grid</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="Main.html#getSolvableMaze-int-int-SearchAlgo-int-">getSolvableMaze</a></span>(int&nbsp;xDim,
+<td class="colFirst"><code>static <a href="Entity.Grid.html" title="class in &lt;Unnamed&gt;">Entity.Grid</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="Main.html#getSolvableMaze-int-int-Algorithms.SearchAlgo-int-">getSolvableMaze</a></span>(int&nbsp;xDim,
                int&nbsp;yDim,
-               <a href="SearchAlgo.html" title="interface in &lt;Unnamed&gt;">SearchAlgo</a>&nbsp;algo,
+               <a href="Algorithms.SearchAlgo.html" title="interface in &lt;Unnamed&gt;">Algorithms.SearchAlgo</a>&nbsp;algo,
                int&nbsp;prob)</code>
 <div class="block">This method returns a solvable maze for given inputs.</div>
 </td>
@@ -161,32 +161,32 @@ extends java.lang.Object</pre>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="Main.html#printResultsToCsv-java.lang.String-java.util.List-">printResultsToCsv</a></span>(java.lang.String&nbsp;fileName,
-                 java.util.List&lt;<a href="GridWorldInfo.html" title="class in &lt;Unnamed&gt;">GridWorldInfo</a>&gt;&nbsp;gridWorldInfo)</code>
-<div class="block">Takes a list of GridWorldInfo: <a href="GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>GridWorldInfo</code></a> and prints it to a pre-designed csv template</div>
+                 java.util.List&lt;<a href="Entity.GridWorldInfo.html" title="class in &lt;Unnamed&gt;">Entity.GridWorldInfo</a>&gt;&nbsp;gridWorldInfo)</code>
+<div class="block">Takes a list of Entity.GridWorldInfo: <a href="Entity.GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>Entity.GridWorldInfo</code></a> and prints it to a pre-designed csv template</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="Main.html#runRepeatedSearch-java.lang.String-int-int-int-SearchAlgo-boolean-int-boolean-">runRepeatedSearch</a></span>(java.lang.String&nbsp;fileName,
+<td class="colLast"><code><span class="memberNameLink"><a href="Main.html#runRepeatedSearch-java.lang.String-int-int-int-Algorithms.SearchAlgo-boolean-int-boolean-">runRepeatedSearch</a></span>(java.lang.String&nbsp;fileName,
                  int&nbsp;xDim,
                  int&nbsp;yDim,
                  int&nbsp;numIter,
-                 <a href="SearchAlgo.html" title="interface in &lt;Unnamed&gt;">SearchAlgo</a>&nbsp;algo,
+                 <a href="Algorithms.SearchAlgo.html" title="interface in &lt;Unnamed&gt;">Algorithms.SearchAlgo</a>&nbsp;algo,
                  boolean&nbsp;canSeeSideways,
                  int&nbsp;maxProb,
                  boolean&nbsp;needsToBeSolvable)</code>
 <div class="block">Overloaded method for running searching without backtracking
 
-     <a href="Main.html#runRepeatedSearch-java.lang.String-int-int-int-SearchAlgo-boolean-int-boolean-int-"><code>runRepeatedSearch(String, int, int, int, SearchAlgo, boolean, int, boolean, int)</code></a>.</div>
+     <a href="Main.html#runRepeatedSearch-java.lang.String-int-int-int-Algorithms.SearchAlgo-boolean-int-boolean-int-"><code>runRepeatedSearch(String, int, int, int, Algorithms.SearchAlgo, boolean, int, boolean, int)</code></a>.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="Main.html#runRepeatedSearch-java.lang.String-int-int-int-SearchAlgo-boolean-int-boolean-int-">runRepeatedSearch</a></span>(java.lang.String&nbsp;fileName,
+<td class="colLast"><code><span class="memberNameLink"><a href="Main.html#runRepeatedSearch-java.lang.String-int-int-int-Algorithms.SearchAlgo-boolean-int-boolean-int-">runRepeatedSearch</a></span>(java.lang.String&nbsp;fileName,
                  int&nbsp;xDim,
                  int&nbsp;yDim,
                  int&nbsp;numIter,
-                 <a href="SearchAlgo.html" title="interface in &lt;Unnamed&gt;">SearchAlgo</a>&nbsp;algo,
+                 <a href="Algorithms.SearchAlgo.html" title="interface in &lt;Unnamed&gt;">Algorithms.SearchAlgo</a>&nbsp;algo,
                  boolean&nbsp;canSeeSideways,
                  int&nbsp;maxProb,
                  boolean&nbsp;needsToBeSolvable,
@@ -196,11 +196,11 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="Main.html#runThreeSearches-java.lang.String-int-int-int-SearchAlgo-boolean-int-">runThreeSearches</a></span>(java.lang.String&nbsp;fileName,
+<td class="colLast"><code><span class="memberNameLink"><a href="Main.html#runThreeSearches-java.lang.String-int-int-int-Algorithms.SearchAlgo-boolean-int-">runThreeSearches</a></span>(java.lang.String&nbsp;fileName,
                 int&nbsp;xDim,
                 int&nbsp;yDim,
                 int&nbsp;numIter,
-                <a href="SearchAlgo.html" title="interface in &lt;Unnamed&gt;">SearchAlgo</a>&nbsp;algo,
+                <a href="Algorithms.SearchAlgo.html" title="interface in &lt;Unnamed&gt;">Algorithms.SearchAlgo</a>&nbsp;algo,
                 boolean&nbsp;canSeeSideways,
                 int&nbsp;maxProb)</code>
 <div class="block">This is used for questions 6,7 with bfs and A*.</div>
@@ -213,7 +213,7 @@ extends java.lang.Object</pre>
                  int&nbsp;xDim,
                  int&nbsp;yDim,
                  int&nbsp;numIter,
-                 java.util.function.BiFunction&lt;<a href="Tuple.html" title="class in &lt;Unnamed&gt;">Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;,<a href="Tuple.html" title="class in &lt;Unnamed&gt;">Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;,java.lang.Double&gt;&nbsp;heuristic,
+                 java.util.function.BiFunction&lt;<a href="Utility.Tuple.html" title="class in &lt;Unnamed&gt;">Utility.Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;,<a href="Utility.Tuple.html" title="class in &lt;Unnamed&gt;">Utility.Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;,java.lang.Double&gt;&nbsp;heuristic,
                  int&nbsp;prob,
                  double&nbsp;maxWeight,
                  double&nbsp;step)</code>
@@ -269,26 +269,26 @@ extends java.lang.Object</pre>
 <div class="block">Main Execution Method</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>args</code> - Input arguments X - Gird X size, Y - Grid Y size, Iterations - Number of Iterations (defaults to 100)</dd>
+<dd><code>args</code> - Input arguments X - Gird X size, Y - Entity.Grid Y size, Iterations - Number of Iterations (defaults to 100)</dd>
 </dl>
 </li>
 </ul>
-<a name="getSolvableMaze-int-int-SearchAlgo-int-">
+<a name="getSolvableMaze-int-int-Algorithms.SearchAlgo-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSolvableMaze</h4>
-<pre>public static&nbsp;<a href="Grid.html" title="class in &lt;Unnamed&gt;">Grid</a>&nbsp;getSolvableMaze(int&nbsp;xDim,
+<pre>public static&nbsp;<a href="Entity.Grid.html" title="class in &lt;Unnamed&gt;">Entity.Grid</a>&nbsp;getSolvableMaze(int&nbsp;xDim,
                                    int&nbsp;yDim,
-                                   <a href="SearchAlgo.html" title="interface in &lt;Unnamed&gt;">SearchAlgo</a>&nbsp;algo,
+                                   <a href="Algorithms.SearchAlgo.html" title="interface in &lt;Unnamed&gt;">Algorithms.SearchAlgo</a>&nbsp;algo,
                                    int&nbsp;prob)</pre>
 <div class="block">This method returns a solvable maze for given inputs. It uses a search algo to make sure there is a path to the
  end.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>xDim</code> - Dimension of the Grid's X coord</dd>
-<dd><code>yDim</code> - Dimension of the Grid's Y coord</dd>
+<dd><code>xDim</code> - Dimension of the Entity.Grid's X coord</dd>
+<dd><code>yDim</code> - Dimension of the Entity.Grid's Y coord</dd>
 <dd><code>algo</code> - Algorithm to use for searching</dd>
 <dd><code>prob</code> - Probability of a space being blocked</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -296,7 +296,7 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="runRepeatedSearch-java.lang.String-int-int-int-SearchAlgo-boolean-int-boolean-">
+<a name="runRepeatedSearch-java.lang.String-int-int-int-Algorithms.SearchAlgo-boolean-int-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -306,16 +306,16 @@ extends java.lang.Object</pre>
                                      int&nbsp;xDim,
                                      int&nbsp;yDim,
                                      int&nbsp;numIter,
-                                     <a href="SearchAlgo.html" title="interface in &lt;Unnamed&gt;">SearchAlgo</a>&nbsp;algo,
+                                     <a href="Algorithms.SearchAlgo.html" title="interface in &lt;Unnamed&gt;">Algorithms.SearchAlgo</a>&nbsp;algo,
                                      boolean&nbsp;canSeeSideways,
                                      int&nbsp;maxProb,
                                      boolean&nbsp;needsToBeSolvable)</pre>
 <div class="block">Overloaded method for running searching without backtracking
 
-     <a href="Main.html#runRepeatedSearch-java.lang.String-int-int-int-SearchAlgo-boolean-int-boolean-int-"><code>runRepeatedSearch(String, int, int, int, SearchAlgo, boolean, int, boolean, int)</code></a>.</div>
+     <a href="Main.html#runRepeatedSearch-java.lang.String-int-int-int-Algorithms.SearchAlgo-boolean-int-boolean-int-"><code>runRepeatedSearch(String, int, int, int, Algorithms.SearchAlgo, boolean, int, boolean, int)</code></a>.</div>
 </li>
 </ul>
-<a name="runRepeatedSearch-java.lang.String-int-int-int-SearchAlgo-boolean-int-boolean-int-">
+<a name="runRepeatedSearch-java.lang.String-int-int-int-Algorithms.SearchAlgo-boolean-int-boolean-int-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -325,26 +325,26 @@ extends java.lang.Object</pre>
                                      int&nbsp;xDim,
                                      int&nbsp;yDim,
                                      int&nbsp;numIter,
-                                     <a href="SearchAlgo.html" title="interface in &lt;Unnamed&gt;">SearchAlgo</a>&nbsp;algo,
+                                     <a href="Algorithms.SearchAlgo.html" title="interface in &lt;Unnamed&gt;">Algorithms.SearchAlgo</a>&nbsp;algo,
                                      boolean&nbsp;canSeeSideways,
                                      int&nbsp;maxProb,
                                      boolean&nbsp;needsToBeSolvable,
                                      int&nbsp;backtrackDistance)</pre>
 <div class="block">This is used for questions 4,5,and 8 A*. It runs the searchs for a given number of iterations and puts there info
- into a list of <a href="GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>GridWorldInfo</code></a> and prints to a CSV using <a href="Main.html#printResultsToCsv-java.lang.String-java.util.List-"><code>printResultsToCsv(String, List)</code></a>  }</div>
+ into a list of <a href="Entity.GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>Entity.GridWorldInfo</code></a> and prints to a CSV using <a href="Main.html#printResultsToCsv-java.lang.String-java.util.List-"><code>printResultsToCsv(String, List)</code></a>  }</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>fileName</code> - Filename</dd>
 <dd><code>xDim</code> - XDimension of grid</dd>
 <dd><code>yDim</code> - YDimension of grid</dd>
 <dd><code>numIter</code> - Number of iterations</dd>
-<dd><code>algo</code> - Search Algo to use</dd>
+<dd><code>algo</code> - Utility Algo to use</dd>
 <dd><code>backtrackDistance</code> - number of steps for backtracking (Question 8 only)</dd>
 <dd><code>needsToBeSolvable</code> - Used to see if a grid needs to be solvable for data reporting purposes</dd>
 </dl>
 </li>
 </ul>
-<a name="runThreeSearches-java.lang.String-int-int-int-SearchAlgo-boolean-int-">
+<a name="runThreeSearches-java.lang.String-int-int-int-Algorithms.SearchAlgo-boolean-int-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -354,18 +354,18 @@ extends java.lang.Object</pre>
                                     int&nbsp;xDim,
                                     int&nbsp;yDim,
                                     int&nbsp;numIter,
-                                    <a href="SearchAlgo.html" title="interface in &lt;Unnamed&gt;">SearchAlgo</a>&nbsp;algo,
+                                    <a href="Algorithms.SearchAlgo.html" title="interface in &lt;Unnamed&gt;">Algorithms.SearchAlgo</a>&nbsp;algo,
                                     boolean&nbsp;canSeeSideways,
                                     int&nbsp;maxProb)</pre>
 <div class="block">This is used for questions 6,7 with bfs and A*. It runs the searchs for a given number of iterations and puts there info
- into a list of <a href="GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>GridWorldInfo</code></a> and prints to a CSV using <a href="Main.html#printResultsToCsv-java.lang.String-java.util.List-"><code>printResultsToCsv(String, List)</code></a>  }</div>
+ into a list of <a href="Entity.GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>Entity.GridWorldInfo</code></a> and prints to a CSV using <a href="Main.html#printResultsToCsv-java.lang.String-java.util.List-"><code>printResultsToCsv(String, List)</code></a>  }</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>fileName</code> - Filename</dd>
 <dd><code>xDim</code> - XDimension of grid</dd>
 <dd><code>yDim</code> - YDimension of grid</dd>
 <dd><code>numIter</code> - Number of iterations</dd>
-<dd><code>algo</code> - Search Algo to use</dd>
+<dd><code>algo</code> - Utility Algo to use</dd>
 <dd><code>canSeeSideways</code> - Does this algo bump into obstacles</dd>
 <dd><code>maxProb</code> - Maximum probability to go up to</dd>
 </dl>
@@ -382,18 +382,18 @@ extends java.lang.Object</pre>
                                      int&nbsp;xDim,
                                      int&nbsp;yDim,
                                      int&nbsp;numIter,
-                                     java.util.function.BiFunction&lt;<a href="Tuple.html" title="class in &lt;Unnamed&gt;">Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;,<a href="Tuple.html" title="class in &lt;Unnamed&gt;">Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;,java.lang.Double&gt;&nbsp;heuristic,
+                                     java.util.function.BiFunction&lt;<a href="Utility.Tuple.html" title="class in &lt;Unnamed&gt;">Utility.Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;,<a href="Utility.Tuple.html" title="class in &lt;Unnamed&gt;">Utility.Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;,java.lang.Double&gt;&nbsp;heuristic,
                                      int&nbsp;prob,
                                      double&nbsp;maxWeight,
                                      double&nbsp;step)</pre>
 <div class="block">This is used for questions 9. It runs the searchs for a given number of iterations and puts there info
- into a list of <a href="GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>GridWorldInfo</code></a> and prints to a CSV using <a href="Main.html#printResultsToCsv-java.lang.String-java.util.List-"><code>printResultsToCsv(String, List)</code></a>  }</div>
+ into a list of <a href="Entity.GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>Entity.GridWorldInfo</code></a> and prints to a CSV using <a href="Main.html#printResultsToCsv-java.lang.String-java.util.List-"><code>printResultsToCsv(String, List)</code></a>  }</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>fileName1</code> - First file name</dd>
 <dd><code>fileName2</code> - Second file name</dd>
-<dd><code>xDim</code> - xDimension of Grid</dd>
-<dd><code>yDim</code> - yDimension of Grid</dd>
+<dd><code>xDim</code> - xDimension of Entity.Grid</dd>
+<dd><code>yDim</code> - yDimension of Entity.Grid</dd>
 <dd><code>numIter</code> - Number of Iterations</dd>
 <dd><code>heuristic</code> - Hueristic to use</dd>
 <dd><code>prob</code> - Probability of a space being blocked</dd>
@@ -409,8 +409,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>printResultsToCsv</h4>
 <pre>public static&nbsp;void&nbsp;printResultsToCsv(java.lang.String&nbsp;fileName,
-                                     java.util.List&lt;<a href="GridWorldInfo.html" title="class in &lt;Unnamed&gt;">GridWorldInfo</a>&gt;&nbsp;gridWorldInfo)</pre>
-<div class="block">Takes a list of GridWorldInfo: <a href="GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>GridWorldInfo</code></a> and prints it to a pre-designed csv template</div>
+                                     java.util.List&lt;<a href="Entity.GridWorldInfo.html" title="class in &lt;Unnamed&gt;">Entity.GridWorldInfo</a>&gt;&nbsp;gridWorldInfo)</pre>
+<div class="block">Takes a list of Entity.GridWorldInfo: <a href="Entity.GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>Entity.GridWorldInfo</code></a> and prints it to a pre-designed csv template</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>fileName</code> - name of the file</dd>
@@ -444,8 +444,8 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="Heuristics.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="Robot.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="Utility.Heuristics.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="Entity.Robot.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="index.html?Main.html" target="_top">Frames</a></li>

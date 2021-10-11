@@ -1,3 +1,15 @@
+import Agents.BasicInferenceAgent;
+import Agents.BetterInferenceAgent;
+import Agents.InferenceAgent;
+import Algorithms.AStarSearch;
+import Algorithms.SearchAlgo;
+import Entity.*;
+import Utility.ColorConstant;
+import Utility.Heuristics;
+import Agents.NaiveAgent;
+import Utility.Point;
+import Utility.Sentiment;
+
 // just tests the search algos to make sure they work
 // usage: java Test xSize ySize blockedProbability%
 public class Test {
@@ -15,10 +27,10 @@ public class Test {
             for(int i = 0; i < world.getXSize(); ++i) {
                 GridCell cell = world.getCell(i, j);
                 String symbol = "o"; // default symbol
-                if(cell.isVisited()) symbol = "\u001B[36m-\u001B[0m";
-                else if(cell.getBlockSentiment() == Sentiment.Free) symbol = "\u001B[32mo\u001B[0m";
-                else if(cell.getBlockSentiment() == Sentiment.Blocked) symbol = "\u001B[33mx\u001B[0m";
-                else if(cell.isBlocked()) symbol = "\u001B[31mx\u001B[0m";
+                if(cell.isVisited()) symbol = ColorConstant.ANSI_CYAN+ "-" + ColorConstant.ANSI_RESET;
+                else if(cell.getBlockSentiment() == Sentiment.Free) symbol = ColorConstant.ANSI_GREEN + "o" + ColorConstant.ANSI_RESET;
+                else if(cell.getBlockSentiment() == Sentiment.Blocked) symbol = ColorConstant.ANSI_YELLOW + "x" + ColorConstant.ANSI_RESET;
+                else if(cell.isBlocked()) symbol = ColorConstant.ANSI_RED + "x" + ColorConstant.ANSI_RESET;
                 System.out.print(symbol);
             }
             System.out.print('\n');
@@ -29,15 +41,15 @@ public class Test {
         for (int j = 0; j < world.getYSize(); j++) {
             for (int i = 0; i < world.getXSize(); i++) {
                 GridCell cell = world.getCell(i, j);
-                System.out.print(cell.isBlocked() ?  "\u001B[31m" : "\u001B[0m"); // set color
+                System.out.print(cell.isBlocked() ?  ColorConstant.ANSI_RED : ColorConstant.ANSI_RESET); // set color
                 System.out.print(cell.getNumSensedBlocked());
             }
             System.out.print('\n');
         }
-        System.out.print("\u001B[0m");
+        System.out.print(ColorConstant.ANSI_RESET);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)  {
         int x = Integer.parseInt(args[0]);
         int y = Integer.parseInt(args[1]);
         int prob = Integer.parseInt(args[2]);
@@ -47,8 +59,8 @@ public class Test {
         Point goal = new Point(x-1, y-1);
 
         SearchAlgo algo = new AStarSearch(Heuristics::manhattanDistance);
-        InferenceAgent agent = BasicInferenceAgent::naiveLearn;
-        InferenceAgent betterAgent = BetterInferenceAgent::naiveLearn;
+        InferenceAgent agent = new BasicInferenceAgent();
+        InferenceAgent betterAgent = new BetterInferenceAgent();
 
         Robot robot = new Robot(start, goal, agent, world, algo);
         GridWorldInfo result = robot.run();

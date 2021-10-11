@@ -47,8 +47,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="AStarSearch.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="Grid.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="Algorithms.AStarSearch.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="Entity.Grid.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="index.html?BFSObject.html" target="_top">Frames</a></li>
@@ -144,12 +144,12 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static <a href="GridWorldInfo.html" title="class in &lt;Unnamed&gt;">GridWorldInfo</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="BFSObject.html#BFS-Tuple-Tuple-Grid-java.util.function.Predicate-">BFS</a></span>(<a href="Tuple.html" title="class in &lt;Unnamed&gt;">Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;&nbsp;start,
-   <a href="Tuple.html" title="class in &lt;Unnamed&gt;">Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;&nbsp;end,
-   <a href="Grid.html" title="class in &lt;Unnamed&gt;">Grid</a>&nbsp;grid,
-   java.util.function.Predicate&lt;<a href="GridCell.html" title="class in &lt;Unnamed&gt;">GridCell</a>&gt;&nbsp;isBlocked)</code>
-<div class="block">Runs BFS on a Grid and returns a <a href="GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>GridWorldInfo</code></a> containing usage data.</div>
+<td class="colFirst"><code>static <a href="Entity.GridWorldInfo.html" title="class in &lt;Unnamed&gt;">Entity.GridWorldInfo</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="BFSObject.html#BFS-Utility.Tuple-Utility.Tuple-Entity.Grid-java.util.function.Predicate-">BFS</a></span>(<a href="Utility.Tuple.html" title="class in &lt;Unnamed&gt;">Utility.Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;&nbsp;start,
+   <a href="Utility.Tuple.html" title="class in &lt;Unnamed&gt;">Utility.Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;&nbsp;end,
+   <a href="Entity.Grid.html" title="class in &lt;Unnamed&gt;">Entity.Grid</a>&nbsp;grid,
+   java.util.function.Predicate&lt;<a href="Entity.GridCell.html" title="class in &lt;Unnamed&gt;">Entity.GridCell</a>&gt;&nbsp;isBlocked)</code>
+<div class="block">Runs BFS on a Entity.Grid and returns a <a href="Entity.GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>Entity.GridWorldInfo</code></a> containing usage data.</div>
 </td>
 </tr>
 </table>
@@ -191,25 +191,25 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="BFS-Tuple-Tuple-Grid-java.util.function.Predicate-">
+<a name="BFS-Utility.Tuple-Utility.Tuple-Entity.Grid-java.util.function.Predicate-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>BFS</h4>
-<pre>public static&nbsp;<a href="GridWorldInfo.html" title="class in &lt;Unnamed&gt;">GridWorldInfo</a>&nbsp;BFS(<a href="Tuple.html" title="class in &lt;Unnamed&gt;">Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;&nbsp;start,
-                                <a href="Tuple.html" title="class in &lt;Unnamed&gt;">Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;&nbsp;end,
-                                <a href="Grid.html" title="class in &lt;Unnamed&gt;">Grid</a>&nbsp;grid,
-                                java.util.function.Predicate&lt;<a href="GridCell.html" title="class in &lt;Unnamed&gt;">GridCell</a>&gt;&nbsp;isBlocked)</pre>
-<div class="block">Runs BFS on a Grid and returns a <a href="GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>GridWorldInfo</code></a> containing usage data.</div>
+<pre>public static&nbsp;<a href="Entity.GridWorldInfo.html" title="class in &lt;Unnamed&gt;">Entity.GridWorldInfo</a>&nbsp;BFS(<a href="Utility.Tuple.html" title="class in &lt;Unnamed&gt;">Utility.Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;&nbsp;start,
+                                <a href="Utility.Tuple.html" title="class in &lt;Unnamed&gt;">Utility.Tuple</a>&lt;java.lang.Integer,java.lang.Integer&gt;&nbsp;end,
+                                <a href="Entity.Grid.html" title="class in &lt;Unnamed&gt;">Entity.Grid</a>&nbsp;grid,
+                                java.util.function.Predicate&lt;<a href="Entity.GridCell.html" title="class in &lt;Unnamed&gt;">Entity.GridCell</a>&gt;&nbsp;isBlocked)</pre>
+<div class="block">Runs BFS on a Entity.Grid and returns a <a href="Entity.GridWorldInfo.html" title="class in &lt;Unnamed&gt;"><code>Entity.GridWorldInfo</code></a> containing usage data.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>start</code> - Start Position</dd>
 <dd><code>end</code> - End Position</dd>
-<dd><code>grid</code> - Grid to Search</dd>
+<dd><code>grid</code> - Entity.Grid to Utility</dd>
 <dd><code>isBlocked</code> - Predicate whether a cell is blocked</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>GridWorldInfo containing the info for grid world</dd>
+<dd>Entity.GridWorldInfo containing the info for grid world</dd>
 </dl>
 </li>
 </ul>
@@ -239,8 +239,8 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="AStarSearch.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="Grid.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="Algorithms.AStarSearch.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="Entity.Grid.html" title="class in &lt;Unnamed&gt;"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="index.html?BFSObject.html" target="_top">Frames</a></li>

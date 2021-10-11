@@ -1,3 +1,5 @@
+package Utility;
+
 public class Tuple<X, Y> {
     public final X f1;
     public final Y f2;
@@ -10,7 +12,7 @@ public class Tuple<X, Y> {
     /**
      * Tests whether two tuples are equal by using the stored objects .equals method
      *
-     * @param obj Tuple to be compared
+     * @param obj Utility.Tuple to be compared
      * @return true if both objects in the tuple are equal
      */
     @Override

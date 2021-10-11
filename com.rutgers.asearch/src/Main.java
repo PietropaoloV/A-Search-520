@@ -1,3 +1,8 @@
+import Algorithms.SearchAlgo;
+import Entity.Grid;
+import Entity.GridWorldInfo;
+import Utility.Point;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -9,7 +14,7 @@ public class Main {
     /**
      * Main Execution Method
      *
-     * @param args Input arguments X - Gird X size, Y - Grid Y size, Iterations - Number of Iterations (defaults to 100)
+     * @param args Input arguments X - Gird X size, Y - Entity.Grid Y size, Iterations - Number of Iterations (defaults to 100)
      */
     // Input args: x, y, number of iterations
     public static void main(String[] args) {
@@ -22,8 +27,8 @@ public class Main {
      * This method returns a solvable maze for given inputs. It uses a search algo to make sure there is a path to the
      * end.
      *
-     * @param xDim Dimension of the Grid's X coord
-     * @param yDim Dimension of the Grid's Y coord
+     * @param xDim Dimension of the Entity.Grid's X coord
+     * @param yDim Dimension of the Entity.Grid's Y coord
      * @param algo Algorithm to use for searching
      * @param prob Probability of a space being blocked
      * @return returns a solvable maze
@@ -43,7 +48,7 @@ public class Main {
     }
 
     /**
-     * Takes a list of GridWorldInfo: {@link GridWorldInfo} and prints it to a pre-designed csv template
+     * Takes a list of Entity.GridWorldInfo: {@link GridWorldInfo} and prints it to a pre-designed csv template
      *
      * @param fileName name of the file
      * @param gridWorldInfo List of GridWorldInfos

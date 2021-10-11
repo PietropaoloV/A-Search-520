@@ -1,15 +1,14 @@
-public class BasicInferenceAgent {
-    public static void naiveLearn(Grid kb, Point location) {
-        boolean status = propagateInferences(kb);
+package Agents;
 
-        if (status == false) {
-            throw new AssertionError("KB is inconsistent somehow");
-        }
+import Entity.Grid;
+import Entity.GridCell;
+import Utility.Point;
+import Utility.Sentiment;
 
-    }
-
-    // makes deterministic inferences -> outputs whether the KB is consistent or not
-    public static boolean propagateInferences(Grid kb) {
+@FunctionalInterface
+public interface InferenceAgent {
+    void learn(Grid kb, Point location);
+    default boolean propagateInferences(Grid kb) {
         boolean done = false;
         while (!done) { // keep iterating until no more updates are made
             done = true;
@@ -35,7 +34,7 @@ public class BasicInferenceAgent {
                             }
                         });
                     } else if (cell.getNumAdjEmpty() == cell.getNumAdj() - cell.getNumSensedBlocked()) { // N_x - C_x =
-                                                                                                         // E_x
+                        // E_x
                         done = false;
                         kb.forEachNeighbour(new Point(x, y), nbr -> {
                             if (nbr.getBlockSentiment() == Sentiment.Unsure) {
@@ -49,4 +48,5 @@ public class BasicInferenceAgent {
 
         return true; // no inconsistencies detected
     }
+
 }
