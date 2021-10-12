@@ -23,7 +23,7 @@ public class Robot {
         this.searchAlgo = searchAlgo;
 
         kb.setSentiment(start, Sentiment.Free); // the agent starts off knowing that the start is unblocked
-        kb.getCell(start).setVisited(true);
+        kb.setCell(start).setVisited(true);
         this.agent.learn(this.kb, this.current);
     }
 
@@ -65,7 +65,7 @@ public class Robot {
             } else {
                 kb.setSentiment(position, Sentiment.Free);
                 move(position);
-                nextCell.setVisited(true);
+                nextCell.setVisited(true); // mark cell as visited (implies we've sensed the info in that cell)
                 numStepsTaken++;
                 path.remove(0);
             }
@@ -91,7 +91,7 @@ public class Robot {
             // find path
             gridWorldInfoGlobal.numPlans++;
             GridWorldInfo result = searchAlgo.search(current, goal, kb,
-                    cell -> cell.isBlocked());
+                    cell -> cell.getBlockSentiment() == Sentiment.Blocked);
 
             // if no path found, exit with failure
             if (result == null || result.path == null) {
