@@ -14,6 +14,8 @@ public class Robot {
     private InferenceAgent agent;
     private Grid kb; // knowledge base
     private SearchAlgo searchAlgo;
+    private static double NANO_SECONDS = 1000000000d;
+
 
     public Robot(Point start, Point goal, InferenceAgent agent, Grid grid, SearchAlgo searchAlgo) {
         this.current = start;
@@ -106,7 +108,7 @@ public class Robot {
             if (pair.f2) gridWorldInfoGlobal.numBumps++;
         }
         long end = System.nanoTime();
-        gridWorldInfoGlobal.runtime = end - start;
+        gridWorldInfoGlobal.runtime = (end - start)/NANO_SECONDS;
 
         // count number of cells determined
         for(int y = 0; y < kb.getYSize(); y++) {

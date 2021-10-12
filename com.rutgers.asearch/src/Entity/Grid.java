@@ -3,6 +3,7 @@ package Entity;
 import Utility.Point;
 import Utility.Sentiment;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class Grid {
@@ -143,11 +144,11 @@ public class Grid {
     }
 
     public void forEachNeighbour(Point coord, Consumer<GridCell> action) {
-        for (Point adj : coord.get8Neighbours()) {
-            GridCell cell = setCell(adj);
+        Arrays.stream(coord.get8Neighbours()).forEach(point -> {
+            GridCell cell = setCell(point);
             if (cell != null)
                 action.accept(cell);
-        }
+        });
     }
 
     @Override

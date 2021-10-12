@@ -11,7 +11,7 @@ public class GridWorldInfo {
     public int numBumps;
     public int numPlans;
     public int numCellsDetermined;
-    public long runtime;
+    public double runtime;
 
     public List<Point> path; // path does not include start cell
 

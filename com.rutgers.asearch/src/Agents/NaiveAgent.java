@@ -12,7 +12,7 @@ public class NaiveAgent implements InferenceAgent {
         // do nothing
     }
 
-    public static void canSeeSideways(Grid kb, Point location) {
+    public void canSeeSideways(Grid kb, Point location) {
         for (Point adj : location.get4Neighbours()) {
             GridCell neighbour = kb.getCell(adj);
             if (neighbour == null) continue;

@@ -12,7 +12,7 @@ public class Test {
         System.out.println("number of bumps: " + result.numBumps);
         System.out.println("number of (re)-plans: " + result.numPlans);
         System.out.println("number of cells determined: " + result.numCellsDetermined);
-        System.out.println("runtime: " + result.runtime);
+        System.out.println("runtime: " + result.runtime + "s");
     }
 
     public static void printWorld(Grid world) {
@@ -63,13 +63,13 @@ public class Test {
         Robot robot = new Robot(start, goal, agent, world, algo);
         GridWorldInfo result = robot.run();
         printResults(result);
-        // printWorld(world);
+        printWorld(world);
         System.out.println();
 
         System.out.println("'Better' version:");
         Robot robot2 = new Robot(start, goal, betterAgent, world2, algo);
         GridWorldInfo result2 = robot2.run();
         printResults(result2);
-        // printWorld(world2);
+        printWorld(world2);
     }
 }
