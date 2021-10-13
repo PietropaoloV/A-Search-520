@@ -5,8 +5,6 @@ import Entity.GridCell;
 import Utility.Point;
 import Utility.Sentiment;
 
-import java.util.Arrays;
-
 @FunctionalInterface
 public interface InferenceAgent {
     /**

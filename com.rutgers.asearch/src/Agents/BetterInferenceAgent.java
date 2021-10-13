@@ -51,6 +51,7 @@ public class BetterInferenceAgent implements InferenceAgent {
                     if (status == false) { // contradiction found -> nbr is empty
                         done = false;
                         kb.setSentiment(adj, Sentiment.Free);
+                        propagateInferences(kb, adj);
                         continue;
                     }
 
@@ -61,6 +62,7 @@ public class BetterInferenceAgent implements InferenceAgent {
                     if (status == false) { // contradiction found -> nbr is blocked
                         done = false;
                         kb.setSentiment(adj, Sentiment.Blocked);
+                        propagateInferences(kb, adj);
                         continue;
                     }
 
