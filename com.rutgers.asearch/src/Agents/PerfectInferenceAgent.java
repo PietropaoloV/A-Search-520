@@ -9,14 +9,13 @@ import Utility.*;
 public class PerfectInferenceAgent implements InferenceAgent {
     private BasicInferenceAgent deterministicAgent;
     private int depth;
+    private static final Sentiment[] list = {Sentiment.Blocked, Sentiment.Free};
 
-    
     /**
      * Default constructor: initializes agent to explore to infinite depth
      */
     public PerfectInferenceAgent() {
-        deterministicAgent = new BasicInferenceAgent();
-        depth = -1;
+        this(-1);
     }
 
     /**
@@ -25,7 +24,7 @@ public class PerfectInferenceAgent implements InferenceAgent {
      * @param depth
      */
     public PerfectInferenceAgent(int depth) {
-        deterministicAgent = new BasicInferenceAgent();
+        this.deterministicAgent = new BasicInferenceAgent();
         this.depth = depth;
     }
 
@@ -60,29 +59,20 @@ public class PerfectInferenceAgent implements InferenceAgent {
                         continue;
                     }
 
-                    // test if setting nbr -> blocked yields a contradiction
-                    Grid copy = new Grid(kb, false); // make shallow copy so original grid isn't mangled up
-                    copy.setSentiment(adj, Sentiment.Blocked);
-                    boolean status = totalSolve(copy, depth);
-                    if (status == false) { // contradiction found -> nbr is empty
-                        done = false;
-                        kb.setSentiment(adj, Sentiment.Free);
-                        propagateInferences(kb, adj);
-                        continue;
+                    // test if setting nbr to each status yields a contradiction
+                    for(int i = 0; i < list.length; i++) {
+                        Grid copy = new Grid(kb, false); // make shallow copy so original grid isn't mangled up
+                        copy.setSentiment(adj, list[i]);
+                        boolean status = propagateInferences(copy, adj) && totalSolve(copy, depth); // use short-circuiting
+                        if (status == false) { // contradiction found -> nbr is the other option
+                            done = false;
+                            kb.setSentiment(adj, list[(i+1)%2]);
+                            propagateInferences(kb, adj);
+                            break;
+                        }
                     }
 
-                    // test if setting nbr -> empty yields a contradiction
-                    copy = new Grid(kb, false);
-                    copy.setSentiment(adj, Sentiment.Free);
-                    status = totalSolve(copy, depth);
-                    if (status == false) { // contradiction found -> nbr is blocked
-                        done = false;
-                        kb.setSentiment(adj, Sentiment.Blocked);
-                        propagateInferences(kb, adj);
-                        continue;
-                    }
-
-                    // no contradictions found; test inconclusive for this nbr
+                    // either nbr's status has been set, or the test is inconclusive
                 }
             }
         }
@@ -142,13 +132,5 @@ public class PerfectInferenceAgent implements InferenceAgent {
         }
 
         return false; // kb is not satisfiable
-    }
-
-    // class GridCellComparator implements Comparator<GridCell> {
-    //     @Override
-    //     public int compare(GridCell g1, GridCell g2) {
-
-    //     }
-    // }
-    
+    }    
 }
