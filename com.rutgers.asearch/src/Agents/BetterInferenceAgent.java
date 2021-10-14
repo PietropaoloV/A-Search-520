@@ -10,6 +10,7 @@ import Utility.Sentiment;
 
 public class BetterInferenceAgent implements InferenceAgent {
     BasicInferenceAgent deterministicAgent;
+    private static final Sentiment[] list = { Sentiment.Blocked, Sentiment.Free };
 
     public BetterInferenceAgent() {
         deterministicAgent = new BasicInferenceAgent();
@@ -44,27 +45,20 @@ public class BetterInferenceAgent implements InferenceAgent {
                         continue;
                     }
 
-                    // test if setting nbr -> blocked yields a contradiction
-                    Grid copy = new Grid(kb, false); // make shallow copy so original grid isn't mangled up
-                    copy.setSentiment(adj, Sentiment.Blocked);
-                    boolean status = propagateInferences(copy, adj);
-                    if (status == false) { // contradiction found -> nbr is empty
-                        done = false;
-                        kb.setSentiment(adj, Sentiment.Free);
-                        continue;
+                    // test if setting nbr to each status yields a contradiction
+                    for (int i = 0; i < list.length; i++) {
+                        Grid copy = new Grid(kb, false); // make shallow copy so original grid isn't mangled up
+                        copy.setSentiment(adj, list[i]);
+                        boolean status = propagateInferences(copy, adj);
+                        if (status == false) { // contradiction found -> nbr is the other option
+                            done = false;
+                            kb.setSentiment(adj, list[(i + 1) % 2]);
+                            propagateInferences(kb, adj);
+                            break;
+                        }
                     }
 
-                    // test if setting nbr -> empty yields a contradiction
-                    copy = new Grid(kb, false);
-                    copy.setSentiment(adj, Sentiment.Free);
-                    status = propagateInferences(copy, adj);
-                    if (status == false) { // contradiction found -> nbr is blocked
-                        done = false;
-                        kb.setSentiment(adj, Sentiment.Blocked);
-                        continue;
-                    }
-
-                    // no contradictions found; test inconclusive for this nbr
+                    // either nbr's status has been set, or the test is inconclusive
                 }
             }
         }
