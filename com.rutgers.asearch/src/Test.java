@@ -52,24 +52,33 @@ public class Test {
         int prob = Integer.parseInt(args[2]);
         Grid world = new Grid(x, y, prob);
         Grid world2 = new Grid(world, true);
+        Grid world3 = new Grid(world, true);
         Point start = new Point(0, 0);
         Point goal = new Point(x - 1, y - 1);
 
         SearchAlgo algo = new AStarSearch(Heuristics::manhattanDistance);
         InferenceAgent agent = new BasicInferenceAgent();
         InferenceAgent betterAgent = new BetterInferenceAgent();
+        InferenceAgent perfectAgent = new PerfectInferenceAgent();
 
         System.out.println("Example version:");
         Robot robot = new Robot(start, goal, agent, world, algo);
         GridWorldInfo result = robot.run();
         printResults(result);
-        printWorld(world);
+        // printWorld(world);
         System.out.println();
 
         System.out.println("'Better' version:");
         Robot robot2 = new Robot(start, goal, betterAgent, world2, algo);
         GridWorldInfo result2 = robot2.run();
         printResults(result2);
-        printWorld(world2);
+        // printWorld(world2);
+        System.out.println();
+
+        System.out.println("'Perfect' version:");
+        Robot robot3 = new Robot(start, goal, perfectAgent, world3, algo);
+        GridWorldInfo result3 = robot3.run();
+        printResults(result3);
+        // printWorld(world3);
     }
 }
