@@ -81,8 +81,8 @@ public class PerfectInferenceAgent implements InferenceAgent {
 
     /**
      * Attempts to find a partial assignment satisfying the constraints.
-     * Updates the original board with cell statuses that are inferred along the way.
-     * Do not rely on the state of kb after calling this function.
+     * Modifies the original board with cell statuses that are inferred/assigned along the way;
+     * do not rely on the state of kb after calling this function.
      * 
      * @param kb The current state of the knowledge base
      * @return If the current KB is consistent or not
@@ -98,8 +98,10 @@ public class PerfectInferenceAgent implements InferenceAgent {
         for (int y = 0; y < kb.getYSize(); y++) {
             for (int x = 0; x < kb.getXSize(); x++) {
                 GridCell cell = kb.getCell(x, y);
-                if (cell.isVisited() && cell.getNumAdjHidden() > 0)
+                if (cell.isVisited() && cell.getNumAdjHidden() > 0) {
                     openCell = cell;
+                    break;
+                }
             }
         }
 
