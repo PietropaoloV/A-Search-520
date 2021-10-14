@@ -42,12 +42,14 @@ public class Main {
         InferenceAgent fourNeighbour = new FourNeighbourAgent();
         InferenceAgent basicInference = new BasicInferenceAgent();
         InferenceAgent betterInference = new BetterInferenceAgent();
+        InferenceAgent perfectInference = new PerfectInferenceAgent(2);
 
         // create lists to store results
         ArrayList<GridWorldInfo> blindfoldedResults= new ArrayList<>((maxProb + 1) * numIter);
         ArrayList<GridWorldInfo> fourNeighbourResults= new ArrayList<>((maxProb + 1) * numIter);
         ArrayList<GridWorldInfo> basicInferenceResults= new ArrayList<>((maxProb + 1) * numIter);
         ArrayList<GridWorldInfo> betterInferenceResults= new ArrayList<>((maxProb + 1) * numIter);
+        ArrayList<GridWorldInfo> perfectInferenceResults= new ArrayList<>((maxProb + 1) * numIter);
 
         // run tests
         for (int prob = 0; prob <= maxProb; prob++) {
@@ -57,16 +59,29 @@ public class Main {
                 Point goal = new Point(xDim-1, yDim-1);
 
                 Robot blindfoldedRobot = new Robot(start, goal, blindfolded, new Grid(grid, true), algo);
-                blindfoldedResults.add(blindfoldedRobot.run());
+                GridWorldInfo blindfoldedResult = blindfoldedRobot.run();
+                blindfoldedResult.probability = prob;
+                blindfoldedResults.add(blindfoldedResult);
                 
                 Robot fourNeighbourRobot = new Robot(start, goal, fourNeighbour, new Grid(grid, true), algo);
-                fourNeighbourResults.add(fourNeighbourRobot.run());
+                GridWorldInfo fourNeighbourResult = fourNeighbourRobot.run();
+                fourNeighbourResult.probability = prob;
+                fourNeighbourResults.add(fourNeighbourResult);
                 
                 Robot basicInferenceRobot = new Robot(start, goal, basicInference, new Grid(grid, true), algo);
-                basicInferenceResults.add(basicInferenceRobot.run());
+                GridWorldInfo basicResult = basicInferenceRobot.run();
+                basicResult.probability = prob;
+                basicInferenceResults.add(basicResult);
                 
-                Robot betterInferenceRobot = new Robot(start, goal, betterInference, grid, algo);
-                betterInferenceResults.add(betterInferenceRobot.run());
+                Robot betterInferenceRobot = new Robot(start, goal, betterInference, new Grid(grid, true), algo);
+                GridWorldInfo betterResult = betterInferenceRobot.run();
+                betterResult.probability = prob;
+                betterInferenceResults.add(betterResult);
+
+                Robot perfectInferenceRobot = new Robot(start, goal, perfectInference, grid, algo);
+                GridWorldInfo perfectResult = perfectInferenceRobot.run();
+                perfectResult.probability = prob;
+                perfectInferenceResults.add(perfectResult);
             }
         }
 
@@ -75,6 +90,7 @@ public class Main {
         printResultsToCsv("fourNeighbour.csv", fourNeighbourResults);
         printResultsToCsv("basicInference.csv", basicInferenceResults);
         printResultsToCsv("betterInference.csv", betterInferenceResults);
+        printResultsToCsv("perfectInference-d3.csv", perfectInferenceResults);
     }
 
     /**
