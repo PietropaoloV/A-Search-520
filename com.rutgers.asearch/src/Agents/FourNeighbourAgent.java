@@ -5,7 +5,13 @@ import Entity.GridCell;
 import Utility.Point;
 import Utility.Sentiment;
 
+/**
+ * This is the agent that can see from Project 1 (Agent 2).
+ */
 public class FourNeighbourAgent implements InferenceAgent {
+    /**
+     * Learns about its surroundings by directly observing its cardinal neighbours.
+     */
     @Override
     public void learn(Grid kb, Point location) {
         for (Point adj : location.get4Neighbours()) {

@@ -8,6 +8,9 @@ import Entity.GridCell;
 import Utility.Point;
 import Utility.Sentiment;
 
+/**
+ * The improved inference agent (Agent 4).
+ */
 public class BetterInferenceAgent implements InferenceAgent {
     BasicInferenceAgent deterministicAgent;
     private static final Sentiment[] list = { Sentiment.Blocked, Sentiment.Free };
@@ -16,6 +19,9 @@ public class BetterInferenceAgent implements InferenceAgent {
         deterministicAgent = new BasicInferenceAgent();
     }
 
+    /**
+     * Learns about surroundings by applying contradiction testing to unrconfirmed cells.
+     */
     @Override
     public void learn(Grid kb, Point location) {
         // first make all the deterministic inferences possible

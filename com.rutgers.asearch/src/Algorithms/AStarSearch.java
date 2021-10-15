@@ -12,20 +12,17 @@ import java.util.function.Predicate;
 public class AStarSearch implements SearchAlgo {
     private BiFunction<Point, Point, Double> heuristic;
 
+    /**
+     * Constructs the search object with the specified heuristic function.
+     * 
+     * @param heuristic The heuristic to use when searching
+     */
     public AStarSearch(BiFunction<Point, Point, Double> heuristic) {
         this.heuristic = heuristic;
     }
 
     /**
-     * This runs the A* Search algorithm. Predicate is used to pass in a boolean
-     * evaluation function to check what spaces we have been to/are blocked or
-     * spaces that are free. Returns a Entity.GridWorldInfo Object {@link GridWorldInfo}.
-     * 
-     * @param start     Start Location
-     * @param end       End Location
-     * @param grid      Entity.Grid to Search
-     * @param isBlocked Function to check whether cells are blocked
-     * @return
+     * This runs the A* Search algorithm.
      */
     @Override
     public GridWorldInfo search(Point start, Point end, Grid grid, Predicate<GridCell> isBlocked) {
