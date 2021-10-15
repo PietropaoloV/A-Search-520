@@ -6,18 +6,34 @@ import Utility.Sentiment;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
+/**
+ * Collection of {@link Entity.GridCell} instances representing the knowledge
+ * base.
+ */
 public class Grid {
     private GridCell[] grid; // represent as flat array to make deep-copying easier
     private int xSize;
     private int ySize;
 
+    /**
+     * Constructs the grid with the specified parameters.
+     * 
+     * @param xSize       Width of grid
+     * @param ySize       Height of grid
+     * @param probability Density of obstacles
+     */
     public Grid(int xSize, int ySize, int probability) {
         this.xSize = xSize;
         this.ySize = ySize;
         this.grid = generateGrid(xSize, ySize, probability);
     }
 
-    // copy constructor (when deep=false, use lazy copying with getCell/setCell)
+    /**
+     * Copy constructor.
+     * 
+     * @param other Grid from which this grid is initialized.
+     * @param deep  Whether the copy should be deep or shallow.
+     */
     public Grid(Grid other, boolean deep) {
         this.xSize = other.getXSize();
         this.ySize = other.getYSize();
@@ -76,6 +92,13 @@ public class Grid {
         return grid;
     }
 
+    /**
+     * Retrieves the GridCell at (x, y) <strong>FOR READ-ONLY USAGE</strong>.
+     * 
+     * @param x x-coord of GridCell
+     * @param y y-coord of GridCell
+     * @return The GridCell instance
+     */
     public GridCell getCell(int x, int y) {
         if (inBounds(x, y)) {
             return grid[y * getXSize() + x];
@@ -83,12 +106,24 @@ public class Grid {
         return null;
     }
 
-    // IMPORTANT: use this in a read-only fashion
+    /**
+     * Retrieves the GridCell at coord <strong>FOR READ-ONLY USAGE</strong>.
+     * 
+     * @param coord The coordinate of the GridCell
+     * @return The GridCell instance
+     */
     public GridCell getCell(Point coord) {
         return getCell(coord.f1, coord.f2);
     }
 
-    // IMPORTANT: use this when you intend to modify the cell being returned
+    /**
+     * Retrieves the GridCell at coord <strong>FOR READING OR WRITING</strong>.
+     * Checks if the GridCell actually belongs to this grid and if not, creates a
+     * copy to preserve the original instance.
+     * 
+     * @param coord The coordinate of the GridCell
+     * @return The GridCell instance
+     */
     public GridCell setCell(Point coord) {
         GridCell cell = getCell(coord);
         if (cell != null && cell.getOwner() != this) { // the cell belongs to a different grid
@@ -111,7 +146,12 @@ public class Grid {
         return ySize;
     }
 
-    // confirms an unknown cell as blocked/empty and updates KB accordingly
+    /**
+     * Confirms an unknown cell as blocked/empty and updates KB accordingly.
+     * 
+     * @param coord The location of the cell
+     * @param sent  The confirmed status of that cell
+     */
     public void setSentiment(Point coord, Sentiment sent) {
         if (getCell(coord).getBlockSentiment() == sent)
             return; // shortcut check

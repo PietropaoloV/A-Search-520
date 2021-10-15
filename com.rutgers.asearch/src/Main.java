@@ -31,7 +31,7 @@ public class Main {
      * @param xDim    width of the generated grids
      * @param yDim    height of the generated grids
      * @param numIter number of iterations per density value
-     * @param maxProb test densities from 0 -> maxProb (inclusive)
+     * @param maxProb test densities from 0 to maxProb (inclusive)
      */
     public static void runTests(int xDim, int yDim, int numIter, int maxProb) {
         // create search algorithm (used by all agents)

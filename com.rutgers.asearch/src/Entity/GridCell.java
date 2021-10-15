@@ -3,6 +3,9 @@ package Entity;
 import Utility.Point;
 import Utility.Sentiment;
 
+/**
+ * Consolidates all the information associated with a cell in the gridworld.
+ */
 public class GridCell implements Cloneable {
     private final int x;
     private final int y;

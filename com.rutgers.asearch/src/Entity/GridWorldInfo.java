@@ -4,6 +4,9 @@ import Utility.Point;
 
 import java.util.List;
 
+/**
+ * POD class for holding statistics from running tests.
+ */
 public class GridWorldInfo {
     public double probability;
     public double trajectoryLength;

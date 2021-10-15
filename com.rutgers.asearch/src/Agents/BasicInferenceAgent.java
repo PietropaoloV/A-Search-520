@@ -5,16 +5,29 @@ import Entity.GridCell;
 import Utility.Point;
 import Utility.Sentiment;
 
+/**
+ * The example inference agent (Agent 3).
+ */
 public class BasicInferenceAgent implements InferenceAgent {
+    /**
+     * Learns about surroundings by applying the example inference agent rules as
+     * described in the project document.
+     */
     @Override
     public void learn(Grid kb, Point location) {
-        // the possible cells with updated sentiments are the current location and its nbrs;
-        // need to run propagateInferences on all of them
+        // the possible cells with updated sentiments are the current location and its
+        // nbrs; need to run propagateInferences on all of them
         propagateInferences(kb, location);
         kb.forEachNeighbour(location, nbr -> propagateInferences(kb, nbr.getLocation()));
     }
 
-    // backup of inefficient version to verify that behaviour is the same
+    /**
+     * Backup of inefficient implementation of the example inference agent.
+     * Used to verify that behaviour is the same.
+     * 
+     * @param kb       The knowledge base (will be updated with what was learned)
+     * @param location The agent's current location
+     */
     public static void naiveLearn(Grid kb, Point location) {
         boolean done = false;
         while (!done) { // keep iterating until no more updates are made
