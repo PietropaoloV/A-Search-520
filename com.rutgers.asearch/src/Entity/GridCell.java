@@ -3,6 +3,8 @@ package Entity;
 import Utility.Point;
 import Utility.Sentiment;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Consolidates all the information associated with a cell in the gridworld.
  */
@@ -18,6 +20,7 @@ public class GridCell implements Cloneable {
     private boolean isBlocked;
     private boolean isVisited;
     private Grid owner; // used for lazy copying
+    private double probBlocked = 0;
 
     public GridCell(int x, int y, int numAdj, boolean isBlocked, Grid owner) {
         this.x = x;
@@ -33,6 +36,21 @@ public class GridCell implements Cloneable {
         this.numAdjBlocked = 0;
         this.numAdjEmpty = 0;
         this.isVisited = false;
+    }
+
+
+
+    public double getProbBlocked() {
+        AtomicInteger numberSensedBlocked = new AtomicInteger();
+        owner.forEachNeighbour(getLocation(), nbr -> {
+            numberSensedBlocked.addAndGet(nbr.getNumSensedBlocked());
+        });
+        this.setProbBlocked(Math.min(25,numberSensedBlocked.get()) / 25d);
+        return 1 - probBlocked;
+    }
+
+    public void setProbBlocked(double probBlocked) {
+        this.probBlocked = probBlocked;
     }
 
     public int getX() {
