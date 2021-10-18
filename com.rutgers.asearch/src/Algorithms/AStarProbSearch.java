@@ -136,11 +136,11 @@ public class AStarProbSearch extends AStarSearch {
 
         public void updateProbBlocked() {
             if (cell.getBlockSentiment().equals(Sentiment.Blocked)) { // We increase the cost to the cell because we know its blocked
-                probBlocked = 1;
+                probBlocked = 0;
                 return;
             }
             if (cell.getBlockSentiment().equals(Sentiment.Free)) { // If a cell isn't blocked we don't touch the cost
-                probBlocked = 0;
+                probBlocked = 1;
                 return;
             }
             probBlocked = cell.getProbBlocked();
