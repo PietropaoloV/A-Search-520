@@ -121,13 +121,13 @@ public class AStarProbSearch extends AStarSearch {
             this.probBlocked = 0;
             costScale = grid.getXSize() / 10;
             updateProbBlocked();
-            this.f = this.g + this.h - (probBlocked * costScale);
+            Math.max(0,this.f = this.g + this.h - (probBlocked * costScale));
 
 
         }
 
         private void update() {
-            this.f = this.f + this.g - (this.probBlocked * costScale); // also update f-cost
+            this.f = Math.max(0,this.f + this.g - (this.probBlocked * costScale)); // also update f-cost
         }
 
         public double getProbBlocked() {

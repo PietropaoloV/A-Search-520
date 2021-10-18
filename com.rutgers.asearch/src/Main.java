@@ -36,9 +36,10 @@ public class Main {
     public static void runTests(int xDim, int yDim, int numIter, int maxProb) {
         // create search algorithm (used by all agents)
         SearchAlgo algo = new AStarSearch(Heuristics::manhattanDistance);
-
+        SearchAlgo algo2 = new AStarProbSearch(Heuristics::manhattanDistance);
         // create each agent
         InferenceAgent blindfolded = new BlindfoldedAgent();
+        InferenceAgent ratioAgent = new BasicInferenceAgent();
         InferenceAgent fourNeighbour = new FourNeighbourAgent();
         InferenceAgent basicInference = new BasicInferenceAgent();
         InferenceAgent betterInference = new BetterInferenceAgent();
@@ -48,6 +49,7 @@ public class Main {
         ArrayList<GridWorldInfo> blindfoldedResults= new ArrayList<>((maxProb + 1) * numIter);
         ArrayList<GridWorldInfo> fourNeighbourResults= new ArrayList<>((maxProb + 1) * numIter);
         ArrayList<GridWorldInfo> basicInferenceResults= new ArrayList<>((maxProb + 1) * numIter);
+        ArrayList<GridWorldInfo> ratioInferenceResults= new ArrayList<>((maxProb + 1) * numIter);
         ArrayList<GridWorldInfo> betterInferenceResults= new ArrayList<>((maxProb + 1) * numIter);
         ArrayList<GridWorldInfo> perfectInferenceResults= new ArrayList<>((maxProb + 1) * numIter);
 
@@ -72,6 +74,11 @@ public class Main {
                 GridWorldInfo basicResult = basicInferenceRobot.run();
                 basicResult.probability = prob;
                 basicInferenceResults.add(basicResult);
+
+                Robot ratioInferenceRobot = new Robot(start, goal, basicInference, new Grid(grid, true), algo2);
+                GridWorldInfo ratioResult = ratioInferenceRobot.run();
+                basicResult.probability = prob;
+                ratioInferenceResults.add(ratioResult);
                 
                 Robot betterInferenceRobot = new Robot(start, goal, betterInference, new Grid(grid, true), algo);
                 GridWorldInfo betterResult = betterInferenceRobot.run();
@@ -91,6 +98,7 @@ public class Main {
         printResultsToCsv("basicInference.csv", basicInferenceResults);
         printResultsToCsv("betterInference.csv", betterInferenceResults);
         printResultsToCsv("perfectInference-d3.csv", perfectInferenceResults);
+        printResultsToCsv("ratioInference.csv", ratioInferenceResults);
     }
 
     /**
