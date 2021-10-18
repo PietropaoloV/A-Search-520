@@ -43,7 +43,8 @@ public class GridCell implements Cloneable {
     public double getProbBlocked() {
         AtomicInteger numberSensedBlocked = new AtomicInteger();
         owner.forEachNeighbour(getLocation(), nbr -> {
-            numberSensedBlocked.addAndGet(nbr.getNumSensedBlocked());
+            if(nbr.isVisited)
+             numberSensedBlocked.addAndGet(nbr.getNumSensedBlocked());
         });
         this.setProbBlocked(Math.min(25,numberSensedBlocked.get()) / 25d);
         return 1 - probBlocked;
