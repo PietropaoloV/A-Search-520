@@ -2,7 +2,9 @@ package Entity;
 
 import Utility.Point;
 import Utility.Sentiment;
+import Utility.Terrain;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
@@ -20,12 +22,11 @@ public class Grid {
      * 
      * @param xSize       Width of grid
      * @param ySize       Height of grid
-     * @param probability Density of obstacles
      */
-    public Grid(int xSize, int ySize, int probability) {
+    public Grid(int xSize, int ySize) {
         this.xSize = xSize;
         this.ySize = ySize;
-        this.grid = generateGrid(xSize, ySize, probability);
+        this.grid = generateGrid(xSize, ySize);
     }
 
     /**
@@ -46,50 +47,45 @@ public class Grid {
         }
     }
 
-    private boolean generateIsBlocked(int probabilityOfBlocked) {
-        return Math.random() * 100 < probabilityOfBlocked;
+    private boolean generateIsBlocked() {
+        return Math.random() * 100 < 30;
     }
 
     private boolean inBounds(int x, int y) {
         return x >= 0 && y >= 0 && x < xSize && y < ySize;
     }
 
-    private GridCell[] generateGrid(int dimX, int dimY, int probabilityOfBlocked) {
-        GridCell[] grid = new GridCell[dimX * dimY];
+    private GridCell[] setGoal(GridCell[] grid, ArrayList<Integer> freeCellIndexes){
+        int location = (int) Math.random() * freeCellIndexes.size();
+        int index = freeCellIndexes.get(location);
+        grid[index].setGoal(true);
+        return grid;
+    }
 
+    private GridCell[] generateGrid(int dimX, int dimY) {
+        GridCell[] grid = new GridCell[dimX * dimY];
+        ArrayList<Integer> freeListIndexes = new ArrayList<>();
         for (int y = 0; y < dimY; y++) {
             for (int x = 0; x < dimX; x++) {
                 int index = y * dimX + x;
-
-                int numAdj = 0; // determine how many neighbours the new cell has
-                for (Point neighbour : new Point(x, y).get8Neighbours()) {
-                    if (inBounds(neighbour.f1, neighbour.f2))
-                        numAdj++;
-                }
 
                 // determine if cell is blocked
-                boolean isBlocked = (index == 0 || index == dimX * dimY - 1) ? false
-                        : generateIsBlocked(probabilityOfBlocked);
-
-                grid[index] = new GridCell(x, y, numAdj, isBlocked, this);
-            }
-        }
-
-        // iterate through grid one more time to get C_x for each cell
-        for (int y = 0; y < dimY; y++) {
-            for (int x = 0; x < dimX; x++) {
-                int index = y * dimX + x;
-                if (grid[index].isBlocked()) {
-                    for (Point adj : grid[index].getLocation().get8Neighbours()) {
-                        if (inBounds(adj.f1, adj.f2)) {
-                            grid[adj.f2 * dimX + adj.f1].addNumSensedBlocked(1);
-                        }
-                    }
+                boolean isBlocked = (index == 0) ? false : generateIsBlocked();
+                GridCell gc = new GridCell(x, y, false,  this);
+                Terrain terrain = Terrain.Blocked;
+                gc.setTerrain(terrain);
+                if(!isBlocked){
+                   double terrainType =  Math.random() * 90;
+                   if (terrainType <= 90 ){terrain = Terrain.Forest;}
+                   if (terrainType <= 60 ){ terrain = Terrain.Hilly;}
+                   if (terrainType <= 30){ terrain = Terrain.Flat;}
+                   gc.setTerrain(terrain);
+                   freeListIndexes.add(index);
                 }
+                grid[index] = gc;
             }
         }
-
-        return grid;
+        return setGoal(grid, freeListIndexes);
     }
 
     /**
@@ -144,43 +140,6 @@ public class Grid {
 
     public int getYSize() {
         return ySize;
-    }
-
-    /**
-     * Confirms an unknown cell as blocked/empty and updates KB accordingly.
-     * 
-     * @param coord The location of the cell
-     * @param sent  The confirmed status of that cell
-     */
-    public void setSentiment(Point coord, Sentiment sent) {
-        if (getCell(coord).getBlockSentiment() == sent)
-            return; // shortcut check
-        GridCell cell = setCell(coord);
-
-        // first reset current cell's sentiment if already set
-        switch (cell.getBlockSentiment()) {
-            case Free:
-                forEachNeighbour(coord, nbr -> nbr.addNumAdjEmpty(-1));
-                break;
-            case Blocked:
-                forEachNeighbour(coord, nbr -> nbr.addNumAdjBlocked(-1));
-                break;
-            case Unsure:
-                break;
-        }
-
-        // set cell to new sentiment and update neighbours
-        cell.setBlockSentiment(sent);
-        switch (sent) {
-            case Free:
-                forEachNeighbour(coord, nbr -> nbr.addNumAdjEmpty(1));
-                break;
-            case Blocked:
-                forEachNeighbour(coord, nbr -> nbr.addNumAdjBlocked(1));
-                break;
-            case Unsure:
-                break;
-        }
     }
 
     public void forEachNeighbour(Point coord, Consumer<GridCell> action) {

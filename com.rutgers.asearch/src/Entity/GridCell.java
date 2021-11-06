@@ -2,6 +2,7 @@ package Entity;
 
 import Utility.Point;
 import Utility.Sentiment;
+import Utility.Terrain;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -12,42 +13,39 @@ public class GridCell implements Cloneable {
     private final int x;
     private final int y;
     private Sentiment blockSentiment;
-    private int numAdj; // N_x
-    private int numSensedBlocked; // C_x
-    private int numAdjBlocked; // B_x (confirmed blocked)
-    private int numAdjEmpty; // E_x (confirmed empty)
-    private int numAdjHidden; // H_x -> has no setter since it's determined by other fields
-    private boolean isBlocked;
+    private Terrain terrain;
+    private boolean isGoal;
     private boolean isVisited;
     private Grid owner; // used for lazy copying
     private double probBlocked = 0;
 
-    public GridCell(int x, int y, int numAdj, boolean isBlocked, Grid owner) {
+    public GridCell(int x, int y, boolean isGoal,  Grid owner) {
         this.x = x;
         this.y = y;
-        this.numAdj = numAdj;
-        this.numAdjHidden = numAdj; // all cells start off hidden
-        this.isBlocked = isBlocked;
         this.owner = owner;
-
-        // set default values
+        this.isGoal = isGoal;
         this.blockSentiment = Sentiment.Unsure; // all cells start off undetermined
-        this.numSensedBlocked = 0;
-        this.numAdjBlocked = 0;
-        this.numAdjEmpty = 0;
         this.isVisited = false;
     }
 
+    public Terrain getTerrain() {
+        return terrain;
+    }
 
+    public void setTerrain(Terrain terrain) {
+        this.terrain = terrain;
+    }
+
+    public boolean isGoal() {
+        return isGoal;
+    }
+
+    public void setGoal(boolean goal) {
+        isGoal = goal;
+    }
 
     public double getProbBlocked() {
-        AtomicInteger numberSensedBlocked = new AtomicInteger();
-        owner.forEachNeighbour(getLocation(), nbr -> {
-            if(nbr.isVisited)
-             numberSensedBlocked.addAndGet(nbr.getNumSensedBlocked());
-        });
-        this.setProbBlocked(Math.min(25,numberSensedBlocked.get()) / 25d);
-        return 1 - probBlocked;
+      return this.probBlocked;
     }
 
     public void setProbBlocked(double probBlocked) {
@@ -66,58 +64,16 @@ public class GridCell implements Cloneable {
         return new Point(x, y);
     }
 
+    public boolean isBlocked(){
+        return terrain.equals(Terrain.Blocked);
+    }
+
     public Sentiment getBlockSentiment() {
         return blockSentiment;
     }
 
     public void setBlockSentiment(Sentiment blockSentiment) {
         this.blockSentiment = blockSentiment;
-    }
-
-    public int getNumAdj() {
-        return numAdj;
-    }
-
-    public int getNumSensedBlocked() {
-        return numSensedBlocked;
-    }
-
-    public int getNumSensedEmpty() {
-        return numAdj - numSensedBlocked;
-    }
-
-    public void addNumSensedBlocked(int numSensedBlocked) {
-        this.numSensedBlocked += numSensedBlocked;
-    }
-
-    public int getNumAdjBlocked() {
-        return numAdjBlocked;
-    }
-
-    public void addNumAdjBlocked(int numAdjBlocked) {
-        this.numAdjBlocked += numAdjBlocked;
-        this.numAdjHidden -= numAdjBlocked;
-    }
-
-    public int getNumAdjEmpty() {
-        return numAdjEmpty;
-    }
-
-    public void addNumAdjEmpty(int numAdjEmpty) {
-        this.numAdjEmpty += numAdjEmpty;
-        this.numAdjHidden -= numAdjEmpty;
-    }
-
-    public int getNumAdjHidden() {
-        return numAdjHidden;
-    }
-
-    public boolean isBlocked() {
-        return isBlocked || blockSentiment == Sentiment.Blocked;
-    }
-
-    public void setBlocked(boolean blocked) {
-        isBlocked = blocked;
     }
 
     public boolean isVisited() {

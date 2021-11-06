@@ -1,6 +1,6 @@
 package Entity;
 
-import Agents.InferenceAgent;
+import Agents.Agent;
 import Algorithms.SearchAlgo;
 import Utility.Point;
 import Utility.Sentiment;
@@ -14,7 +14,7 @@ import java.util.List;
 public class Robot {
     private Point current;
     private Point goal;
-    private InferenceAgent agent;
+    private Agent agent;
     private Grid kb; // knowledge base
     private SearchAlgo searchAlgo;
     private static double NANO_SECONDS = 1000000000d;
@@ -29,16 +29,13 @@ public class Robot {
      * @param grid       The initial knowledge base
      * @param searchAlgo The algorithm used to path-plan
      */
-    public Robot(Point start, Point goal, InferenceAgent agent, Grid grid, SearchAlgo searchAlgo) {
+    public Robot(Point start, Point goal, Agent agent, Grid grid, SearchAlgo searchAlgo) {
         this.current = start;
         this.goal = goal;
         this.agent = agent;
         this.kb = grid;
         this.searchAlgo = searchAlgo;
-
-        kb.setSentiment(start, Sentiment.Free); // the agent starts off knowing that the start is unblocked
         kb.setCell(start).setVisited(true);
-        this.agent.learn(this.kb, this.current);
     }
 
     public Point getLocation() {
@@ -80,16 +77,11 @@ public class Robot {
             // attempt to move into next space,
             // and update KB accordingly based on if cell was blocked or empty
             if (nextCell.isBlocked()) {
-                kb.setSentiment(position, Sentiment.Blocked);
-                bumped = true;
+
             } else {
-                kb.setSentiment(position, Sentiment.Free);
-                move(position);
-                nextCell.setVisited(true); // mark cell as visited (implies we've sensed the info in that cell)
-                numStepsTaken++;
-                path.remove(0);
+
             }
-            agent.learn(kb, current); // learn anything possible by running the inference algorithm
+
 
             // check if any steps on remaining path are confirmed to be blocked
             for (Point p : path) {

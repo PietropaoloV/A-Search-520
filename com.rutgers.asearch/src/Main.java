@@ -19,86 +19,6 @@ public class Main {
      *             Iterations - Number of Iterations (defaults to 100)
      */
     public static void main(String[] args) {
-        int x = Integer.parseInt(args[0]);
-        int y = Integer.parseInt(args[1]);
-        int iterations = args.length > 2 ? Integer.parseInt(args[2]): 100;
-        runTests(x, y, iterations, 33);
-    }
-
-    /**
-     * Runs all the tests for each agent, and writes the results to files
-     * 
-     * @param xDim    width of the generated grids
-     * @param yDim    height of the generated grids
-     * @param numIter number of iterations per density value
-     * @param maxProb test densities from 0 to maxProb (inclusive)
-     */
-    public static void runTests(int xDim, int yDim, int numIter, int maxProb) {
-        // create search algorithm (used by all agents)
-        SearchAlgo algo = new AStarSearch(Heuristics::manhattanDistance);
-        SearchAlgo algo2 = new AStarProbSearch(Heuristics::manhattanDistance);
-        // create each agent
-        InferenceAgent blindfolded = new BlindfoldedAgent();
-        InferenceAgent ratioAgent = new BasicInferenceAgent();
-        InferenceAgent fourNeighbour = new FourNeighbourAgent();
-        InferenceAgent basicInference = new BasicInferenceAgent();
-        InferenceAgent betterInference = new BetterInferenceAgent();
-        InferenceAgent perfectInference = new PerfectInferenceAgent(2);
-
-        // create lists to store results
-        ArrayList<GridWorldInfo> blindfoldedResults= new ArrayList<>((maxProb + 1) * numIter);
-        ArrayList<GridWorldInfo> fourNeighbourResults= new ArrayList<>((maxProb + 1) * numIter);
-        ArrayList<GridWorldInfo> basicInferenceResults= new ArrayList<>((maxProb + 1) * numIter);
-        ArrayList<GridWorldInfo> ratioInferenceResults= new ArrayList<>((maxProb + 1) * numIter);
-        ArrayList<GridWorldInfo> betterInferenceResults= new ArrayList<>((maxProb + 1) * numIter);
-        ArrayList<GridWorldInfo> perfectInferenceResults= new ArrayList<>((maxProb + 1) * numIter);
-
-        // run tests
-        for (int prob = 0; prob <= maxProb; prob++) {
-            for (int iter = 0; iter < numIter; iter++) {
-                Grid grid = getSolvableMaze(xDim, yDim, algo, prob);
-                Point start = new Point(0, 0);
-                Point goal = new Point(xDim-1, yDim-1);
-
-                Robot blindfoldedRobot = new Robot(start, goal, blindfolded, new Grid(grid, true), algo);
-                GridWorldInfo blindfoldedResult = blindfoldedRobot.run();
-                blindfoldedResult.probability = prob;
-                blindfoldedResults.add(blindfoldedResult);
-                
-                Robot fourNeighbourRobot = new Robot(start, goal, fourNeighbour, new Grid(grid, true), algo);
-                GridWorldInfo fourNeighbourResult = fourNeighbourRobot.run();
-                fourNeighbourResult.probability = prob;
-                fourNeighbourResults.add(fourNeighbourResult);
-                
-                Robot basicInferenceRobot = new Robot(start, goal, basicInference, new Grid(grid, true), algo);
-                GridWorldInfo basicResult = basicInferenceRobot.run();
-                basicResult.probability = prob;
-                basicInferenceResults.add(basicResult);
-
-                Robot ratioInferenceRobot = new Robot(start, goal, basicInference, new Grid(grid, true), algo2);
-                GridWorldInfo ratioResult = ratioInferenceRobot.run();
-                basicResult.probability = prob;
-                ratioInferenceResults.add(ratioResult);
-                
-                Robot betterInferenceRobot = new Robot(start, goal, betterInference, new Grid(grid, true), algo);
-                GridWorldInfo betterResult = betterInferenceRobot.run();
-                betterResult.probability = prob;
-                betterInferenceResults.add(betterResult);
-
-                Robot perfectInferenceRobot = new Robot(start, goal, perfectInference, grid, algo);
-                GridWorldInfo perfectResult = perfectInferenceRobot.run();
-                perfectResult.probability = prob;
-                perfectInferenceResults.add(perfectResult);
-            }
-        }
-
-        // output results
-        printResultsToCsv("blindfolded.csv", blindfoldedResults);
-        printResultsToCsv("fourNeighbour.csv", fourNeighbourResults);
-        printResultsToCsv("basicInference.csv", basicInferenceResults);
-        printResultsToCsv("betterInference.csv", betterInferenceResults);
-        printResultsToCsv("perfectInference-d3.csv", perfectInferenceResults);
-        printResultsToCsv("ratioInference.csv", ratioInferenceResults);
     }
 
     /**
@@ -118,7 +38,7 @@ public class Main {
         Grid grid;
 
         do {
-            grid = new Grid(xDim, yDim, prob);
+            grid = new Grid(xDim, yDim);
             completeResult = algo.search(start, end, grid, cell -> cell.isBlocked());
         } while (completeResult.path == null);
 
