@@ -17,7 +17,7 @@ public class GridCell implements Cloneable {
     private boolean isGoal;
     private boolean isVisited;
     private Grid owner; // used for lazy copying
-    private double probBlocked = 0;
+    private double probGoal = 0; //Probability this cell has the goal
 
     public GridCell(int x, int y, boolean isGoal,  Grid owner) {
         this.x = x;
@@ -26,10 +26,6 @@ public class GridCell implements Cloneable {
         this.isGoal = isGoal;
         this.blockSentiment = Sentiment.Unsure; // all cells start off undetermined
         this.isVisited = false;
-    }
-
-    public Terrain getTerrain() {
-        return terrain;
     }
 
     public void setTerrain(Terrain terrain) {
@@ -44,12 +40,20 @@ public class GridCell implements Cloneable {
         isGoal = goal;
     }
 
-    public double getProbBlocked() {
-      return this.probBlocked;
+    public boolean examineTerrain(){
+        double val = Math.random();
+        if(this.isGoal && val >= this.terrain.getFalseRate() ){
+            return true;
+        }
+        return false;
     }
 
-    public void setProbBlocked(double probBlocked) {
-        this.probBlocked = probBlocked;
+    public double getProbGoal() {
+        return probGoal;
+    }
+
+    public void setProbGoal(double probGoal) {
+        this.probGoal = probGoal;
     }
 
     public int getX() {
@@ -103,5 +107,9 @@ public class GridCell implements Cloneable {
             System.err.println(e.toString());
         }
         return copy;
+    }
+
+    public Terrain observeTerrain() {
+        return terrain;
     }
 }

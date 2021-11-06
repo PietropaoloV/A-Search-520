@@ -17,6 +17,7 @@ public class Grid {
     private int xSize;
     private int ySize;
 
+
     /**
      * Constructs the grid with the specified parameters.
      * 
@@ -63,7 +64,8 @@ public class Grid {
     }
 
     private GridCell[] generateGrid(int dimX, int dimY) {
-        GridCell[] grid = new GridCell[dimX * dimY];
+        int size = dimX * dimY;
+        GridCell[] grid = new GridCell[size];
         ArrayList<Integer> freeListIndexes = new ArrayList<>();
         for (int y = 0; y < dimY; y++) {
             for (int x = 0; x < dimX; x++) {
@@ -74,6 +76,7 @@ public class Grid {
                 GridCell gc = new GridCell(x, y, false,  this);
                 Terrain terrain = Terrain.Blocked;
                 gc.setTerrain(terrain);
+                gc.setProbGoal(1d/((double) size));
                 if(!isBlocked){
                    double terrainType =  Math.random() * 90;
                    if (terrainType <= 90 ){terrain = Terrain.Forest;}
