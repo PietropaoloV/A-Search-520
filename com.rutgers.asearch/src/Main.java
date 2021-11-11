@@ -1,7 +1,7 @@
 import Algorithms.*;
 import Entity.*;
 import Utility.*;
-import Agents.*;
+// import Agents.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,14 +33,13 @@ public class Main {
      */
     public static Grid getSolvableMaze(int xDim, int yDim, SearchAlgo algo, int prob) {
         Point start = new Point(0, 0);
-        Point end = new Point(xDim - 1, yDim - 1);
-        GridWorldInfo completeResult;
+        Tuple<List<Point>, Integer> completeResult;
         Grid grid;
 
         do {
             grid = new Grid(xDim, yDim);
-            completeResult = algo.search(start, end, grid, cell -> cell.isBlocked());
-        } while (completeResult.path == null);
+            completeResult = algo.search(start, grid.getGoal(), grid, cell -> cell.isBlocked());
+        } while (completeResult.f1 == null);
 
         return grid;
     }
@@ -56,21 +55,19 @@ public class Main {
         try (PrintWriter writer = new PrintWriter(new File(fileName))) {
 
             StringBuilder sb = new StringBuilder();
-            sb.append("Probability");
+            sb.append("probability");
             sb.append(',');
-            sb.append("Solvable");
+            sb.append("num_steps_taken");
             sb.append(',');
-            sb.append("Runtime");
+            sb.append("num_examinations");
             sb.append(',');
-            sb.append("Path Length");
+            sb.append("num_cells_processed");
             sb.append(',');
-            sb.append("Number of Cells Processed");
+            sb.append("num_bumps");
             sb.append(',');
-            sb.append("Number of Bumps");
+            sb.append("num_plans");
             sb.append(',');
-            sb.append("Number of Planning Steps");
-            sb.append(',');
-            sb.append("Number of Cells Determined");
+            sb.append("runtime");
             sb.append('\n');
             writer.write(sb.toString());
 
@@ -78,11 +75,9 @@ public class Main {
                 sb = new StringBuilder();
                 sb.append(info.probability);
                 sb.append(',');
-                sb.append(!Double.isNaN(info.trajectoryLength));
+                sb.append(info.numStepsTaken);
                 sb.append(',');
-                sb.append(info.runtime);
-                sb.append(',');
-                sb.append(info.trajectoryLength);
+                sb.append(info.numExaminations);
                 sb.append(',');
                 sb.append(info.numberOfCellsProcessed);
                 sb.append(',');
@@ -90,7 +85,7 @@ public class Main {
                 sb.append(',');
                 sb.append(info.numPlans);
                 sb.append(',');
-                sb.append(info.numCellsDetermined);
+                sb.append(info.runtime);
                 sb.append('\n');
                 writer.write(sb.toString());
             }
