@@ -1,10 +1,7 @@
 package Entity;
 
 import Utility.Point;
-import Utility.Sentiment;
 import Utility.Terrain;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Consolidates all the information associated with a cell in the gridworld.
@@ -12,20 +9,34 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GridCell implements Cloneable {
     private final int x;
     private final int y;
-    private Sentiment blockSentiment;
     private Terrain terrain;
     private boolean isGoal;
-    private boolean isVisited;
+    private boolean isVisited; // tracks if the robot knows the terrain of this cell
     private Grid owner; // used for lazy copying
-    private double probGoal = 0; //Probability this cell has the goal
+    private double probGoal = 0; // Probability this cell has the goal
 
-    public GridCell(int x, int y, boolean isGoal,  Grid owner) {
+    /**
+     * Used by Grid to construct a GridCell. Automatically assigns GridCells as
+     * not containing the target and equally likely to contain the goal.
+     * 
+     * @param x
+     * @param y
+     * @param owner
+     */
+    public GridCell(int x, int y, Terrain terrain, Grid owner) {
         this.x = x;
         this.y = y;
+        this.terrain = terrain;
         this.owner = owner;
-        this.isGoal = isGoal;
-        this.blockSentiment = Sentiment.Unsure; // all cells start off undetermined
+
+        // set some default values
+        this.isGoal = false;
         this.isVisited = false;
+        this.probGoal = 1d;
+    }
+
+    public Terrain getTerrain() {
+        return terrain;
     }
 
     public void setTerrain(Terrain terrain) {
@@ -40,12 +51,18 @@ public class GridCell implements Cloneable {
         isGoal = goal;
     }
 
-    public boolean examineTerrain(){
-        double val = Math.random();
-        if(this.isGoal && val >= this.terrain.getFalseRate() ){
-            return true;
+    /**
+     * Returns probability of a a successful examination.
+     * Used for Agent 7.
+     * 
+     * @return Probability that an examination of this cell succeeds.
+     */
+    public double getProbSuccess() {
+        if (!isVisited()) {
+            return 0.5*getProbGoal(); // special case when cell is not visited
+        } else {
+            return (1 - getTerrain().getFalseRate())*getProbGoal();
         }
-        return false;
     }
 
     public double getProbGoal() {
@@ -56,28 +73,12 @@ public class GridCell implements Cloneable {
         this.probGoal = probGoal;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
     public Point getLocation() {
         return new Point(x, y);
     }
 
-    public boolean isBlocked(){
+    public boolean isBlocked() {
         return terrain.equals(Terrain.Blocked);
-    }
-
-    public Sentiment getBlockSentiment() {
-        return blockSentiment;
-    }
-
-    public void setBlockSentiment(Sentiment blockSentiment) {
-        this.blockSentiment = blockSentiment;
     }
 
     public boolean isVisited() {
@@ -96,7 +97,6 @@ public class GridCell implements Cloneable {
         this.owner = owner;
     }
 
-    // TODO: better way to do this?
     @Override
     public GridCell clone() {
         GridCell copy = null;
@@ -107,9 +107,5 @@ public class GridCell implements Cloneable {
             System.err.println(e.toString());
         }
         return copy;
-    }
-
-    public Terrain observeTerrain() {
-        return terrain;
     }
 }

@@ -2,8 +2,8 @@ package Algorithms;
 
 import Entity.Grid;
 import Entity.GridCell;
-import Entity.GridWorldInfo;
 import Utility.Point;
+import Utility.Tuple;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -25,11 +25,19 @@ public class AStarSearch implements SearchAlgo {
      * This runs the A* Search algorithm.
      */
     @Override
-    public GridWorldInfo search(Point start, Point end, Grid grid, Predicate<GridCell> isBlocked) {
+    public Tuple<List<Point>, Integer> search(Point start, Point end, Grid grid, Predicate<GridCell> isBlocked) {
         GridCell startCell = grid.getCell(start);
         GridCell endCell = grid.getCell(end);
-        if (startCell == endCell || startCell == null || endCell == null) // checks invalid input
+
+        // checks invalid input
+        if (startCell == null || endCell == null) {
             throw new IllegalArgumentException("start/end cells coincide or are out of bounds");
+        }
+
+        // shortcut check
+        if(startCell == endCell) {
+            return new Tuple<List<Point>, Integer>(new LinkedList<>(), 0);
+        }
 
         // create fringe and process start cell
         HashMap<GridCell, HeuristicData> dataMap = new HashMap<>();
@@ -54,7 +62,7 @@ public class AStarSearch implements SearchAlgo {
                     path.push(currentNode.getLocation());
                     currentNode = currentNode.getPrev();
                 }
-                return new GridWorldInfo(previousCost, numberOfCellsProcessed, path);
+                return new Tuple<List<Point>, Integer>(path, numberOfCellsProcessed);
             }
 
             // else, generate the children of currentNode
@@ -85,7 +93,7 @@ public class AStarSearch implements SearchAlgo {
         }
 
         // path not found
-        return new GridWorldInfo(Double.NaN, numberOfCellsProcessed, null);
+        return new Tuple<List<Point>, Integer>(null, numberOfCellsProcessed);
     }
 
     class GridCellComparator implements Comparator<HeuristicData> { // Custom Comparator for Priority Queue
