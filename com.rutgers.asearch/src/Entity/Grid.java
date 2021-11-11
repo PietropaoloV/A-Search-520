@@ -1,7 +1,6 @@
 package Entity;
 
 import Utility.Point;
-import Utility.Sentiment;
 import Utility.Terrain;
 
 import java.util.ArrayList;
@@ -14,15 +13,15 @@ import java.util.function.Consumer;
  */
 public class Grid {
     private GridCell[] grid; // represent as flat array to make deep-copying easier
+    private Point goal; // cache the location of the goal
     private int xSize;
     private int ySize;
-
 
     /**
      * Constructs the grid with the specified parameters.
      * 
-     * @param xSize       Width of grid
-     * @param ySize       Height of grid
+     * @param xSize Width of grid
+     * @param ySize Height of grid
      */
     public Grid(int xSize, int ySize) {
         this.xSize = xSize;
@@ -40,6 +39,7 @@ public class Grid {
         this.xSize = other.getXSize();
         this.ySize = other.getYSize();
         this.grid = other.getGrid().clone();
+        this.goal = other.getGoal();
 
         if (deep) {
             for (int i = 0; i < grid.length; i++) {
@@ -52,14 +52,11 @@ public class Grid {
         return Math.random() * 100 < 30;
     }
 
-    private boolean inBounds(int x, int y) {
-        return x >= 0 && y >= 0 && x < xSize && y < ySize;
-    }
-
-    private GridCell[] setGoal(GridCell[] grid, ArrayList<Integer> freeCellIndexes){
-        int location = (int) Math.random() * freeCellIndexes.size();
+    private GridCell[] setGoal(GridCell[] grid, ArrayList<Integer> freeCellIndexes) {
+        int location = (int) (Math.random() * freeCellIndexes.size());
         int index = freeCellIndexes.get(location);
         grid[index].setGoal(true);
+        this.goal = grid[index].getLocation();
         return grid;
     }
 
@@ -73,22 +70,29 @@ public class Grid {
 
                 // determine if cell is blocked
                 boolean isBlocked = (index == 0) ? false : generateIsBlocked();
-                GridCell gc = new GridCell(x, y, false,  this);
                 Terrain terrain = Terrain.Blocked;
-                gc.setTerrain(terrain);
-                gc.setProbGoal(1d/((double) size));
-                if(!isBlocked){
-                   double terrainType =  Math.random() * 90;
-                   if (terrainType <= 90 ){terrain = Terrain.Forest;}
-                   if (terrainType <= 60 ){ terrain = Terrain.Hilly;}
-                   if (terrainType <= 30){ terrain = Terrain.Flat;}
-                   gc.setTerrain(terrain);
-                   freeListIndexes.add(index);
+                if (!isBlocked) {
+                    double terrainType = Math.random() * 90;
+                    if (terrainType <= 90) {
+                        terrain = Terrain.Forest;
+                    }
+                    if (terrainType <= 60) {
+                        terrain = Terrain.Hilly;
+                    }
+                    if (terrainType <= 30) {
+                        terrain = Terrain.Flat;
+                    }
+                    freeListIndexes.add(index);
                 }
+                GridCell gc = new GridCell(x, y, terrain, this);
                 grid[index] = gc;
             }
         }
         return setGoal(grid, freeListIndexes);
+    }
+
+    public Point getGoal() {
+        return goal;
     }
 
     /**
@@ -99,7 +103,7 @@ public class Grid {
      * @return The GridCell instance
      */
     public GridCell getCell(int x, int y) {
-        if (inBounds(x, y)) {
+        if (x >= 0 && y >= 0 && x < xSize && y < ySize) { // check if in bounds
             return grid[y * getXSize() + x];
         }
         return null;
@@ -151,6 +155,17 @@ public class Grid {
             if (cell != null)
                 action.accept(cell);
         });
+    }
+
+    /**
+     * Renormalizes the goal probabilities so that they add to one.
+     */
+    public void renormalize() {
+        double sum = Arrays.stream(getGrid())
+                           .mapToDouble(cell -> cell.getProbGoal())
+                           .sum();
+        Arrays.stream(getGrid())
+              .forEach(cell -> cell.setProbGoal(cell.getProbGoal()/sum));
     }
 
     @Override

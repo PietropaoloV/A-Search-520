@@ -1,10 +1,10 @@
 package Utility;
 
 public enum Terrain {
-    Blocked (-1,0),// Blocked Terrain
-    Flat     (0,.2), // Flat Terrain
+    Blocked (-1, 0), // Blocked Terrain
+    Flat    (0, .2), // Flat Terrain
     Hilly   (1, .5), // Hilly Terrain
-    Forest (2, .8); // Forest Terrain
+    Forest  (2, .8); // Forest Terrain
 
     private final int terrain;
     private final double falseRate;

@@ -1,9 +1,8 @@
 package Entity;
 
-import Agents.Agent;
+import Agents.DecisionAgent;
 import Algorithms.SearchAlgo;
 import Utility.Point;
-import Utility.Sentiment;
 import Utility.Tuple;
 
 import java.util.List;
@@ -13,11 +12,17 @@ import java.util.List;
  */
 public class Robot {
     private Point current;
-    private Point goal;
-    private Agent agent;
+    private Point destination; // the current target robot is trying to reach
+    private DecisionAgent agent;
     private Grid kb; // knowledge base
     private SearchAlgo searchAlgo;
-    private static double NANO_SECONDS = 1000000000d;
+    private static final double NANO_SECONDS = 1000000000d;
+
+    // track some runtime statistics
+    private int numStepsTaken;
+    private int numBumps;
+    private int numPlans;
+    private int numExaminations;
 
     /**
      * Constructs the agent with the specified parameters.
@@ -29,21 +34,22 @@ public class Robot {
      * @param grid       The initial knowledge base
      * @param searchAlgo The algorithm used to path-plan
      */
-    public Robot(Point start, Point goal, Agent agent, Grid grid, SearchAlgo searchAlgo) {
+    public Robot(Point start, DecisionAgent agent, Grid grid, SearchAlgo searchAlgo) {
         this.current = start;
-        this.goal = goal;
         this.agent = agent;
         this.kb = grid;
         this.searchAlgo = searchAlgo;
-        kb.setCell(start).setVisited(true);
+        
+        // set default values
+        this.destination = start;
+        this.numStepsTaken = 0;
+        this.numBumps = 0;
+        this.numPlans = 0;
+        this.numExaminations = 0;
     }
 
     public Point getLocation() {
         return current;
-    }
-
-    public Point getGoal() {
-        return goal;
     }
 
     public void move(Point pos) {
@@ -54,8 +60,23 @@ public class Robot {
         return kb;
     }
 
-    public SearchAlgo getSearchAlgo() {
-        return searchAlgo;
+    public boolean visit(GridCell cell) {
+        return true;
+    }
+
+    /**
+     * Examines a cell. Assumes the robot knows the terrain type of the cell.
+     * Updates the probabilities based on the results
+     * 
+     * @return Whether the examination revealed the target or not.
+     */
+    public boolean examineTerrain(GridCell cell) {
+        double val = Math.random();
+        if (cell.isGoal() && val >= cell.getTerrain().getFalseRate()) {
+            return true;
+        }
+        cell.setProbGoal(cell.getTerrain().getFalseRate() * cell.getProbGoal()); // update probability
+        return false;
     }
 
     /**
@@ -63,77 +84,84 @@ public class Robot {
      * prematurely if it detects or bumps into an obstacle.
      * 
      * @param path The path to follow
-     * @return The number of steps taken before stopping, and whether the agent
-     *         bumped into an obstacle
+     * @return Did the robot find the target while running the path?
      */
-    private Tuple<Integer, Boolean> runPath(List<Point> path) {
-        int numStepsTaken = 0;
-        boolean bumped = false;
-        boolean obstructed = false;
-        while (!path.isEmpty() && !obstructed) {
-            Point position = path.get(0);
+    private boolean runPath(List<Point> path) {
+        for (Point position : path) {
             GridCell nextCell = kb.getCell(position);
-
-            // attempt to move into next space,
-            // and update KB accordingly based on if cell was blocked or empty
+            
+            // attempt to move into next space
+            nextCell.setVisited(true);
             if (nextCell.isBlocked()) {
-
+                this.numBumps++;
+                nextCell.setProbGoal(0.0); // update probability
+                return false;
             } else {
-
+                this.numStepsTaken++;
+                move(position);
             }
 
-
-            // check if any steps on remaining path are confirmed to be blocked
-            for (Point p : path) {
-                if (kb.getCell(p).getBlockSentiment() == Sentiment.Blocked) {
-                    obstructed = true;
-                    break;
-                }
+            // decide whether to examine the current cell
+            if (current.equals(destination) || agent.doExamine(kb, current, destination)) {
+                this.numExaminations++;
+                if (examineTerrain(nextCell)) return true; // examination successful
             }
         }
-
-        return new Tuple<>(numStepsTaken, bumped);
+        return false;
     }
 
     /**
      * Runs the entire agent workflow, and records runtime statistics.
+     * Assumes the gridworld is solvable
      * 
      * @return A {@link Entity.GridWorldInfo} instance containing runtime statistics
      */
     public GridWorldInfo run() {
-        GridWorldInfo gridWorldInfoGlobal = new GridWorldInfo(0, 0, null);
+        GridWorldInfo gridWorldInfoGlobal = new GridWorldInfo();
 
         long start = System.nanoTime();
-        while (!current.equals(goal)) { // loop while robot has not reached the destination
-            // find path
-            gridWorldInfoGlobal.numPlans++;
-            GridWorldInfo result = searchAlgo.search(current, goal, kb,
-                    cell -> cell.getBlockSentiment() == Sentiment.Blocked);
+        boolean targetFound = false;
+        while (!targetFound) { // loop while robot has not found the target
+            // get next target to path towards
+            destination = agent.getDestination(kb, current, destination);
 
-            // if no path found, exit with failure
-            if (result == null || result.path == null) {
-                gridWorldInfoGlobal.trajectoryLength = Double.NaN;
-                return gridWorldInfoGlobal;
+            // if robot is already at destination, perform examination immediately
+            if(current.equals(destination)) {
+                this.numExaminations++;
+                if(examineTerrain(kb.getCell(current))) {
+                    targetFound = true;
+                }
+                continue;
             }
 
-            // attempt to travel down returned path, and update statistics
-            Tuple<Integer, Boolean> pair = runPath(result.path);
-            gridWorldInfoGlobal.trajectoryLength += pair.f1;
-            gridWorldInfoGlobal.numberOfCellsProcessed += result.numberOfCellsProcessed;
-            if (pair.f2)
-                gridWorldInfoGlobal.numBumps++;
-        }
-        long end = System.nanoTime();
-        gridWorldInfoGlobal.runtime = (end - start) / NANO_SECONDS;
+            // else, attempt to path to destination via Repeated search
+            while(!current.equals(destination)) {
+                this.numPlans++;
+                Tuple<List<Point>, Integer> result =
+                    searchAlgo.search(current, destination, kb, cell -> cell.isVisited() && cell.isBlocked());
+                gridWorldInfoGlobal.numberOfCellsProcessed += result.f2;
 
-        // count number of cells determined
-        for (int y = 0; y < kb.getYSize(); y++) {
-            for (int x = 0; x < kb.getXSize(); x++) {
-                if (kb.getCell(x, y).getBlockSentiment() != Sentiment.Unsure) {
-                    gridWorldInfoGlobal.numCellsDetermined++;
+                // no path to destination is possible -> invalidate this destination
+                if(result.f1 == null) {
+                    kb.getCell(destination).setProbGoal(0.0); // update probability
+                    break;
+                }
+
+                // run along path; if target found, break
+                if(runPath(result.f1)) {
+                    targetFound = true;
+                    break;
                 }
             }
         }
+        long end = System.nanoTime();
+        gridWorldInfoGlobal.runtime = (end - start) / NANO_SECONDS;
+        
+        // fill in remaining statistics
+        gridWorldInfoGlobal.numStepsTaken = this.numStepsTaken;
+        gridWorldInfoGlobal.numExaminations = this.numExaminations;
+        gridWorldInfoGlobal.numBumps = this.numBumps;
+        gridWorldInfoGlobal.numPlans = this.numPlans;
 
         return gridWorldInfoGlobal;
     }
