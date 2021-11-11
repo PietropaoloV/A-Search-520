@@ -79,9 +79,14 @@ public class Test {
         Robot bot2 = new Robot(start, new Agent7(), new Grid(world, true), algo);
         GridWorldInfo info2 = bot2.run();
 
+        Robot bot3 = new Robot(start, new Agent8(), new Grid(world, true), algo);
+        GridWorldInfo info3 = bot3.run();
+
         printResults(info1);
         System.out.println();
         printResults(info2);
+        System.out.println();
+        printResults(info3);
         // printWorld(world);
     }
 }
