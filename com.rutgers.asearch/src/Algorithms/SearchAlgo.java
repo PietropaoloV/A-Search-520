@@ -2,9 +2,10 @@ package Algorithms;
 
 import Entity.Grid;
 import Entity.GridCell;
-import Entity.GridWorldInfo;
 import Utility.Point;
+import Utility.Tuple;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -19,8 +20,7 @@ public interface SearchAlgo {
      * @param end       End Location
      * @param grid      Grid to Search
      * @param isBlocked Function to check whether cells are blocked
-     * @return The path found (if any) as well as some runtime statistics
-     *         ({@link Entity.GridWorldInfo}).
+     * @return The path found (if any) as well as how many cells were processed
      */
-    GridWorldInfo search(Point start, Point end, Grid grid, Predicate<GridCell> isBlocked);
+    Tuple<List<Point>, Integer> search(Point start, Point end, Grid grid, Predicate<GridCell> isBlocked);
 }
