@@ -33,6 +33,6 @@ public class Agent7 implements DecisionAgent {
 
     @Override
     public boolean doExamine(Grid kb, Point current, Point destination) {
-        return kb.getCell(current).getProbSuccess() > kb.getCell(destination).getProbSuccess();
+        return kb.getCell(current).getProbSuccess() >= kb.getCell(destination).getProbSuccess();
     }
 }
