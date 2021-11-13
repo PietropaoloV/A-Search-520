@@ -59,7 +59,7 @@ public class GridCell implements Cloneable {
      */
     public double getProbSuccess() {
         if (!isVisited()) {
-            return 0.5*getProbGoal(); // special case when cell is not visited
+            return 0.35*getProbGoal(); // special case when cell is not visited
         } else {
             return (1 - getTerrain().getFalseRate())*getProbGoal();
         }
