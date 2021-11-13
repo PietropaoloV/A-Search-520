@@ -1,34 +1,17 @@
 package Agents;
 
-import java.util.Arrays;
-
 import Entity.Grid;
 import Entity.GridCell;
-import Utility.Heuristics;
 import Utility.Point;
-import Utility.Terrain;
 
-public class Agent7 implements DecisionAgent {
-    private GridCell dummyCell;
-
-    public Agent7() {
-        dummyCell = new GridCell(0, 0, Terrain.Blocked, null);
-        dummyCell.setProbGoal(-1.0);
-    }
-
+public class Agent7 extends UtilityAgent {
+    /**
+     * Defines utility by the likelihood of discovering the target by examining this
+     * cell.
+     */
     @Override
-    public Point getDestination(Grid kb, Point current, Point oldDestination) {
-        GridCell bestChoice =
-            Arrays.stream(kb.getGrid())
-                  .reduce(dummyCell, (cell1, cell2) -> {
-                      if(cell2.getProbSuccess() == cell1.getProbSuccess()) {
-                          return (Heuristics.manhattanDistance(current, cell2.getLocation())  <
-                                  Heuristics.manhattanDistance(current, cell1.getLocation())) ?
-                                  cell2 : cell1;
-                      }
-                      return (cell2.getProbSuccess() > cell1.getProbSuccess()) ? cell2 : cell1;
-                  });
-        return bestChoice.getLocation();
+    public double utility(Grid kb, Point current, GridCell cell) {
+        return cell.getProbSuccess();
     }
 
     @Override
