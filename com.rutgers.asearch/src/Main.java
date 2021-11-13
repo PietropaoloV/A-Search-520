@@ -10,7 +10,6 @@ import java.util.*;
 // import java.util.function.BiFunction;
 // import java.util.function.Predicate;
 
-
 public class Main {
     /**
      * Main Execution Method
@@ -23,19 +22,21 @@ public class Main {
         int yDim = Integer.parseInt(args[1]);
         int numGrid = Integer.parseInt(args[2]); // how many grids to generate
         int iterPerGrid = Integer.parseInt(args[3]); // how many times to solve each grid
-        
-        runTests(xDim, yDim, numGrid, iterPerGrid, 30);
+        String prefix = args[4];
+
+        runTests(xDim, yDim, numGrid, iterPerGrid, prefix, 30);
     }
 
     /**
      * 
      * @param xDim
      * @param yDim
-     * @param numGrid how many grids to generate
-     * @param iterPerGrid how many times to solve each grid
+     * @param numGrid     How many grids to generate
+     * @param iterPerGrid How many times to solve each grid
+     * @param prefix      Prefix for generated csv files
      * @param prob
      */
-    public static void runTests(int xDim, int yDim, int numGrid, int iterPerGrid, int prob) {
+    public static void runTests(int xDim, int yDim, int numGrid, int iterPerGrid, String prefix, int prob) {
         // parameters common to each agent
         SearchAlgo algo = new AStarSearch(Heuristics::manhattanDistance);
         Point start = new Point(0, 0);
@@ -45,14 +46,13 @@ public class Main {
         DecisionAgent agent7 = new Agent7();
         DecisionAgent agent8 = new Agent8();
 
+        ArrayList<GridWorldInfo> result6 = new ArrayList<>(numGrid * iterPerGrid);
+        ArrayList<GridWorldInfo> result7 = new ArrayList<>(numGrid * iterPerGrid);
+        ArrayList<GridWorldInfo> result8 = new ArrayList<>(numGrid * iterPerGrid);
 
-        ArrayList<GridWorldInfo> result6 = new ArrayList<>(numGrid*iterPerGrid);
-        ArrayList<GridWorldInfo> result7 = new ArrayList<>(numGrid*iterPerGrid);
-        ArrayList<GridWorldInfo> result8 = new ArrayList<>(numGrid*iterPerGrid);
-        
-        for(int i = 0; i < numGrid; ++i) {
+        for (int i = 0; i < numGrid; ++i) {
             Grid grid = getSolvableMaze(xDim, yDim, algo, 30);
-            for(int j = 0; j < iterPerGrid; ++j) {
+            for (int j = 0; j < iterPerGrid; ++j) {
                 Robot robot6 = new Robot(start, agent6, new Grid(grid, true), algo);
                 Robot robot7 = new Robot(start, agent7, new Grid(grid, true), algo);
                 Robot robot8 = new Robot(start, agent8, new Grid(grid, true), algo);
@@ -63,11 +63,10 @@ public class Main {
             }
         }
 
-        printResultsToCsv("agent6-" + xDim + "x" + yDim + "-" + numGrid + "x" + iterPerGrid + ".csv", result6);
-        printResultsToCsv("agent7-" + xDim + "x" + yDim + "-" + numGrid + "x" + iterPerGrid + ".csv", result7);
-        printResultsToCsv("agent8-" + xDim + "x" + yDim + "-" + numGrid + "x" + iterPerGrid + ".csv", result8);
+        printResultsToCsv(prefix + "agent6-" + xDim + "x" + yDim + "-" + numGrid + "x" + iterPerGrid + ".csv", result6);
+        printResultsToCsv(prefix + "agent7-" + xDim + "x" + yDim + "-" + numGrid + "x" + iterPerGrid + ".csv", result7);
+        printResultsToCsv(prefix + "agent8-" + xDim + "x" + yDim + "-" + numGrid + "x" + iterPerGrid + ".csv", result8);
     }
-
 
     /**
      * This method returns a solvable maze for given inputs. It uses a search algo
