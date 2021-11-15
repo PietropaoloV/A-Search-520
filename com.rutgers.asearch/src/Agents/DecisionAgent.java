@@ -16,12 +16,15 @@ public interface DecisionAgent {
     Point getDestination(Grid kb, Point current, Point oldDestination);
 
     /**
-     * Decides whether the robot should examine the current cell.
+     * Decides whether the robot should examine a cell while travelling down a path.
+     * Default beehaviour is to never stop and examine.
      * 
      * @param kb
      * @param current
      * @param destination
      * @return
      */
-    boolean doExamine(Grid kb, Point current, Point destination);
+    default boolean doExamine(Grid kb, Point current, Point destination) {
+        return false;
+    }
 }

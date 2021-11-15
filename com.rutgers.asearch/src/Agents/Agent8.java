@@ -2,16 +2,18 @@ package Agents;
 
 import Entity.Grid;
 import Entity.GridCell;
+import Utility.Heuristics;
 import Utility.Point;
 
-public class Agent7 extends UtilityAgent {
+public class Agent8 extends UtilityAgent {
     /**
-     * Defines utility by the likelihood of discovering the target by examining this
-     * cell.
+     * Computes a utility function factoring both success likelihood and distance
+     * from current position.
      */
     @Override
     public double utility(Grid kb, Point current, GridCell cell) {
-        return cell.getProbSuccess();
+        double dist = Heuristics.manhattanDistance(current, cell.getLocation()) + 1;
+        return cell.getProbSuccess() / dist;
     }
 
     @Override

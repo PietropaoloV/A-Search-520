@@ -92,7 +92,10 @@ public class AStarSearch implements SearchAlgo {
             }
         }
 
-        // path not found
+        // path not found; update probabilities by marking unprocessed cells as unreachable
+        Arrays.stream(grid.getGrid())
+              .filter(cell -> !dataMap.containsKey(cell))
+              .forEach(cell -> cell.setProbGoal(0.0));
         return new Tuple<List<Point>, Integer>(null, numberOfCellsProcessed);
     }
 

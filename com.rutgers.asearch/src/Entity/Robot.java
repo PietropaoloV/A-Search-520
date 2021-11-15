@@ -41,11 +41,14 @@ public class Robot {
         this.searchAlgo = searchAlgo;
         
         // set default values
-        this.destination = start;
         this.numStepsTaken = 0;
         this.numBumps = 0;
         this.numPlans = 0;
         this.numExaminations = 0;
+
+        // do some initial setup
+        this.kb.getCell(start).setVisited(true); // is currently visiting the start cell
+        this.destination = this.agent.getDestination(this.kb, start, start);
     }
 
     public Point getLocation() {
