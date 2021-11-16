@@ -14,6 +14,8 @@ public class GridCell implements Cloneable {
     private boolean isVisited; // tracks if the robot knows the terrain of this cell
     private Grid owner; // used for lazy copying
     private double probGoal = 0; // Probability this cell has the goal
+    private boolean inRadius = false;
+    private boolean isBumped = false;
 
     /**
      * Used by Grid to construct a GridCell. Automatically assigns GridCells as
@@ -37,6 +39,22 @@ public class GridCell implements Cloneable {
 
     public Terrain getTerrain() {
         return terrain;
+    }
+
+    public boolean isInRadius() {
+        return inRadius;
+    }
+
+    public boolean isBumped() {
+        return isBumped;
+    }
+
+    public void setBumped(boolean bumped) {
+        isBumped = bumped;
+    }
+
+    public void setInRadius(boolean inRadius) {
+        this.inRadius = inRadius;
     }
 
     public void setTerrain(Terrain terrain) {

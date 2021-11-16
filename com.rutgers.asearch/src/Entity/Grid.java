@@ -29,6 +29,13 @@ public class Grid {
         this.grid = generateGrid(xSize, ySize);
     }
 
+    public Grid(int xSize, int ySize,boolean isEc) {
+        this.xSize = xSize;
+        this.ySize = ySize;
+        this.grid =  isEc? generateGridEC(xSize, ySize): generateGrid(xSize, ySize) ;
+
+    }
+
     /**
      * Copy constructor.
      * 
@@ -89,6 +96,37 @@ public class Grid {
             }
         }
         return setGoal(grid, freeListIndexes);
+    }
+
+    private GridCell[] generateGridEC(int dimX, int dimY) {
+        int size = dimX * dimY;
+        GridCell[] grid = new GridCell[size];
+        ArrayList<Integer> freeListIndexes = new ArrayList<>();
+        for (int y = 0; y < dimY; y++) {
+            for (int x = 0; x < dimX; x++) {
+                int index = y * dimX + x;
+
+                // determine if cell is blocked
+                boolean isBlocked = (index == 0) ? false : generateIsBlocked();
+                Terrain terrain = Terrain.Blocked;
+                if (!isBlocked) {
+                    double terrainType = Math.random() * 90;
+                    if (terrainType <= 90) {
+                        terrain = Terrain.Forest;
+                    }
+                    if (terrainType <= 60) {
+                        terrain = Terrain.Hilly;
+                    }
+                    if (terrainType <= 30) {
+                        terrain = Terrain.Flat;
+                    }
+                    freeListIndexes.add(index);
+                }
+                GridCell gc = new GridCell(x, y, terrain, this);
+                grid[index] = gc;
+            }
+        }
+        return grid;
     }
 
     public Point getGoal() {
@@ -168,6 +206,21 @@ public class Grid {
               .forEach(cell -> cell.setProbGoal(cell.getProbGoal()/sum));
     }
 
+    public void renormalizeEC(ArrayList<Point> summ, ArrayList<Point> radius) {
+        double sum = 0;
+        for (Point p:summ) {
+             if(inBounds(p) && getCell(p).getProbGoal() != 0)
+                    sum += getCell(p).getProbGoal();
+        }
+        for (Point p: radius) {
+            if (inBounds(p) && this.getCell(p).getProbGoal() == 0) {
+                getCell(p).setProbGoal(getCell(p).getProbGoal()/sum);
+                getCell(p).setInRadius(true);
+
+            }
+        }
+
+    }
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("Entity.Grid{");
@@ -190,5 +243,42 @@ public class Grid {
         }
         builder.append("\n}");
         return builder.toString();
+    }
+
+    public boolean inBounds(Point newLocation) {
+        return (newLocation.f1 < xSize && newLocation.f1 >=0 && newLocation.f2 < ySize && newLocation.f2 >=0);
+    }
+
+    public boolean senseTarget(Point currLoc, Point targetLoc){
+        for (Point point :
+                currLoc.get8Neighbours()) {
+
+            if(this.inBounds(point) && point.equals(targetLoc))
+                return true;
+        }
+        return false;
+    }
+
+    public void initProbs(int numBlocked){
+        for (int i = 0; i < grid.length; i++) {
+            grid[i].setProbGoal(1d/(grid.length-numBlocked));
+        }
+    }
+
+    public void setProbsToZero() {
+        for (int i = 0; i < grid.length; i++) {
+            grid[i].setProbGoal(0);
+            grid[i].setInRadius(false);
+        }
+    }
+
+    public ArrayList<Point> getKnownBlockedNeighbors(Point point){
+        ArrayList<Point> blockedPoints = new ArrayList<>();
+        for (Point p : point.get8Neighbours()) {
+            if ( !inBounds(p) || (this.getCell(p).isBlocked() && this.getCell(p).isBumped())) {
+                blockedPoints.add(p);
+            }
+        }
+        return blockedPoints;
     }
 }
